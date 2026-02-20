@@ -1,0 +1,435 @@
+/* Status Page Refinements */
+.status-page {
+    padding: 6rem 2rem 4rem;
+    min-height: 100vh;
+    background: transparent;
+    position: relative;
+    color: #fff;
+    margin-top: 50px;
+}
+
+.status-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.status-header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.status-main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin: 0 0 1rem;
+    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.5) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* ... existing content ... */
+.status-footer {
+    text-align: center;
+    margin-top: 4rem;
+    color: #6B7280;
+    font-size: 0.9rem;
+}
+
+.status-footer p {
+    font-weight: 800;
+    /* Extra bold to be sure */
+    margin: 0;
+}
+
+.status-date {
+    background: linear-gradient(90deg, #0D64FF, #6B5CE5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10B981;
+    position: relative;
+}
+
+.live-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: #10B981;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: status-ripple 2s infinite ease-out;
+    z-index: -1;
+}
+
+@keyframes status-ripple {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0;
+    }
+}
+
+/* Legend Section */
+.status-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.legend-item {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.legend-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.legend-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.2;
+}
+
+/* Filter Section */
+.status-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    position: relative;
+    padding: 0 2rem;
+}
+
+.filter-scroll-area {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0.5rem 0;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+.filter-scroll-area::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.filter-btn {
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.filter-btn:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.filter-btn.active {
+    background: #FFC107;
+    /* User provided status filter active color in image seems yellow, but requested brand gradient. Let's start with yellow active for visibility as per image, then can switch if requested. *Wait* user said "don't use yellow color man". OK using Gradient. */
+    background: linear-gradient(135deg, #2561FF 0%, #755DDE 100%);
+    border-color: transparent;
+    box-shadow: 0 0 15px rgba(37, 97, 255, 0.4);
+}
+
+.filter-arrow {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+    /* Important: remove padding to prevent crushing SVG */
+}
+
+.filter-arrow svg {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+}
+
+.filter-arrow:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Content Area & Preloader */
+.status-content {
+    min-height: 400px;
+}
+
+.status-preloader-inline {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 100%;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(37, 97, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #2561FF;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto 1.5rem;
+}
+
+.loader-content p {
+    font-weight: 500;
+    background: linear-gradient(90deg, #2561FF, #755DDE);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 1.5s infinite;
+}
+
+/* Game Group */
+.game-status-group {
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.game-header {
+    background: linear-gradient(90deg, rgba(37, 97, 255, 0.15) 0%, rgba(37, 97, 255, 0) 100%);
+    border-left: 4px solid #2561FF;
+    padding: 1rem 1.5rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1rem;
+}
+
+.game-title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Product List */
+.product-list {
+    background: rgba(20, 20, 25, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.product-item {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.product-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.detail-value {
+    font-size: 0.9rem;
+    color: #fff;
+    font-weight: 600;
+}
+
+.status-col {
+    display: flex;
+    justify-content: center;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.action-col {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-purchase {
+    background: linear-gradient(135deg, #2561FF 0%, #755DDE 100%);
+    /* Blue/Purple Gradient */
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-purchase:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 97, 255, 0.3);
+}
+
+/* Footer */
+.status-footer {
+    text-align: center;
+    margin-top: 4rem;
+    color: #6B7280;
+    font-size: 0.9rem;
+}
+
+.status-date {
+    background: linear-gradient(90deg, #0D64FF, #6B5CE5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+/* Animations */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .product-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .product-info-col,
+    .action-col,
+    .status-col {
+        justify-content: flex-start;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-legend {
+        grid-template-columns: 1fr;
+    }
+
+    .status-filter-container {
+        padding: 0;
+    }
+}

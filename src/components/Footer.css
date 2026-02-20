@@ -1,0 +1,299 @@
+.footer-section {
+    background-color: #0a0a0c;
+    color: #a1a1aa;
+    padding: 60px 0 30px;
+    font-family: 'Satoshi', sans-serif;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-container {
+    width: 100%;
+    padding: 0 40px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 120px;
+    margin-bottom: 100px;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Brand Column */
+.brand-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.footer-logo img {
+    height: 32px;
+    width: auto;
+}
+
+.footer-desc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #a1a1aa;
+    margin-bottom: 10px;
+}
+
+.footer-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #9c5bf5 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 16px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 25px rgba(79, 104, 248, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+
+.footer-cta-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.footer-cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 35px rgba(79, 104, 248, 0.6);
+}
+
+.trustpilot-widget {
+    background: #ffffff;
+    color: #000000;
+    padding: 14px 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 10px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.trustpilot-widget:hover {
+    color: #000000;
+    transform: translateY(-2px);
+}
+
+.trustpilot-star {
+    color: #00b67a;
+    font-size: 1.2rem;
+}
+
+/* Links Columns */
+.footer-heading {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-links li a {
+    color: #a1a1aa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.footer-links li a:before {
+    content: "•";
+    color: #a456f6;
+    margin-right: 8px;
+    font-size: 1.2rem;
+    line-height: 0;
+}
+
+.footer-links li a:hover {
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+.contact-email {
+    display: block;
+    color: #ffffff;
+    margin-top: 8px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Bottom Section */
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.payment-methods {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.payment-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.payment-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.payment-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1aa;
+    transition: color 0.3s ease;
+}
+
+.payment-icon:hover {
+    color: #ffffff;
+}
+
+.crypto-group {
+    gap: 12px;
+}
+
+.crypto {
+    color: #a1a1aa;
+}
+
+.crypto:hover {
+    color: #a456f6;
+    transform: translateY(-1px);
+}
+
+.footer-legal {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.copyright p {
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+}
+
+.powered-by {
+    font-size: 0.75rem;
+    color: #52525b;
+    font-weight: 700;
+}
+
+.social-links {
+    display: flex;
+    gap: 10px;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1aa;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-icon:hover {
+    background: rgba(139, 92, 246, 0.2);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .footer-top {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .brand-col {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 640px) {
+    .footer-container {
+        padding: 0 20px;
+    }
+
+    .footer-top {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .brand-col {
+        grid-column: span 1;
+    }
+
+    .mobile-hidden {
+        display: none;
+    }
+
+    .spacer-col {
+        margin-top: -20px;
+    }
+
+    .footer-legal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .payment-methods {
+        justify-content: center;
+    }
+}

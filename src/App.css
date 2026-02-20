@@ -1,0 +1,19 @@
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+h1 {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+p {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+}

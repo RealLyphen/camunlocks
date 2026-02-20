@@ -1,0 +1,290 @@
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 340px;
+    background: rgba(12, 12, 16, 0.96);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    box-shadow:
+        0 12px 50px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(139, 92, 246, 0.05);
+    padding: 0;
+    z-index: 3000;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+.profile-dropdown.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Header */
+.pd-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 1.3rem 1.4rem 1.1rem;
+}
+
+.pd-avatar-lg {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--secondary-color), #6D28D9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.pd-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.pd-email {
+    color: #ffffff;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pd-member-since {
+    color: rgba(255, 255, 255, 0.35);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.76rem;
+}
+
+/* Divider */
+.pd-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 0;
+}
+
+/* Sections */
+.pd-section {
+    padding: 1rem 1.4rem;
+}
+
+.pd-section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+}
+
+/* Balance */
+.pd-balance {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pd-balance-amount {
+    color: #ffffff;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Orders */
+.pd-empty-orders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 1rem 0;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.85rem;
+}
+
+.pd-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.pd-orders-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pd-orders-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pd-orders-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.pd-order-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: background 0.2s ease;
+}
+
+.pd-order-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.pd-order-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pd-order-id {
+    color: #ffffff;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.pd-order-date {
+    color: rgba(255, 255, 255, 0.35);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.72rem;
+}
+
+.pd-order-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.pd-order-total {
+    color: #ffffff;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.pd-order-status {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Logout */
+.pd-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: none;
+    color: #f87171;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.pd-logout-btn:hover {
+    background: rgba(248, 113, 113, 0.08);
+    color: #fca5a5;
+}
+
+/* Close Button */
+.pd-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 5;
+    padding: 0;
+}
+
+.pd-close-btn svg {
+    fill: currentColor;
+}
+
+.pd-close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* View All Orders */
+.pd-view-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: 10px;
+    color: #a78bfa;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pd-view-all-btn:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.25);
+    color: #c4b5fd;
+    transform: translateY(-1px);
+}
