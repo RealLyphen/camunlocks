@@ -110,7 +110,7 @@ app.put('/api/store/sync', async (req, res) => {
 });
 
 // Catch-all route to serve React app for non-API requests
-app.get('*', (req, res) => {
+app.get('/(.*)', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
