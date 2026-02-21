@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
+import axios from 'axios';
 import { cashAppPoller, type VerificationEvent } from '../services/cashAppPoller';
+
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export interface LayoutBlock {
     id: string;
@@ -532,6 +535,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     useEffect(() => {
         localStorage.setItem('storeSettings', JSON.stringify(settings));
         document.documentElement.style.setProperty('--accent-color', settings.accentColor);
+        axios.put(`${API_URL}/store/sync`, { key: 'storeSettings', data: settings }).catch(() => { });
     }, [settings]);
 
     useEffect(() => {
@@ -540,22 +544,27 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     useEffect(() => {
         localStorage.setItem('storeProducts', JSON.stringify(products));
+        axios.put(`${API_URL}/store/sync`, { key: 'storeProducts', data: products }).catch(() => { });
     }, [products]);
 
     useEffect(() => {
         localStorage.setItem('storeCategories', JSON.stringify(categories));
+        axios.put(`${API_URL}/store/sync`, { key: 'storeCategories', data: categories }).catch(() => { });
     }, [categories]);
 
     useEffect(() => {
         localStorage.setItem('storeCoupons', JSON.stringify(coupons));
+        axios.put(`${API_URL}/store/sync`, { key: 'storeCoupons', data: coupons }).catch(() => { });
     }, [coupons]);
 
     useEffect(() => {
         localStorage.setItem('storeReferrals', JSON.stringify(referrals));
+        axios.put(`${API_URL}/store/sync`, { key: 'storeReferrals', data: referrals }).catch(() => { });
     }, [referrals]);
 
     useEffect(() => {
         localStorage.setItem('gameStatuses', JSON.stringify(gameStatuses));
+        axios.put(`${API_URL}/store/sync`, { key: 'gameStatuses', data: gameStatuses }).catch(() => { });
     }, [gameStatuses]);
 
     const [giftCards, setGiftCards] = useState<GiftCard[]>(() => {
@@ -565,6 +574,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     useEffect(() => {
         localStorage.setItem('giftCards', JSON.stringify(giftCards));
+        axios.put(`${API_URL}/store/sync`, { key: 'giftCards', data: giftCards }).catch(() => { });
     }, [giftCards]);
 
     const defaultGateways: PaymentGateway[] = [
@@ -582,6 +592,11 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         if (saved) return JSON.parse(saved);
         return { gateways: defaultGateways, manualPayments: [], cryptoAddresses: [] };
     });
+
+    useEffect(() => {
+        localStorage.setItem('paymentSettings', JSON.stringify(paymentSettings));
+        axios.put(`${API_URL}/store/sync`, { key: 'paymentSettings', data: paymentSettings }).catch(() => { });
+    }, [paymentSettings]);
 
     // ─── Auth State ───
     const [users, setUsers] = useState<User[]>(() => {
@@ -623,6 +638,23 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             (event) => setVerificationLog(prev => [event, ...prev].slice(0, 100)),
         );
 
+        // Fetch from MongoDB on load
+        axios.get(`${API_URL}/store`)
+            .then(res => {
+                const data = res.data;
+                if (!data) return;
+                if (data.settings && Object.keys(data.settings).length > 0) setSettings(data.settings);
+                if (data.products && data.products.length > 0) setProducts(data.products);
+                if (data.categories && data.categories.length > 0) setCategories(data.categories);
+                if (data.coupons && data.coupons.length > 0) setCoupons(data.coupons);
+                if (data.referrals && data.referrals.length > 0) setReferrals(data.referrals);
+                if (data.gameStatuses && data.gameStatuses.length > 0) setGameStatuses(data.gameStatuses);
+                if (data.giftCards && data.giftCards.length > 0) setGiftCards(data.giftCards);
+                if (data.paymentSettings && Object.keys(data.paymentSettings).length > 0) setPaymentSettings(data.paymentSettings);
+                if (data.users && data.users.length > 0) setUsers(data.users);
+            })
+            .catch(err => console.error('Failed to load from MongoDB:', err));
+
         return () => {
             cashAppPoller.stop();
             setPollerRunning(false);
@@ -631,6 +663,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     useEffect(() => {
         localStorage.setItem('storeUsers', JSON.stringify(users));
+        axios.put(`${API_URL}/store/sync`, { key: 'storeUsers', data: users }).catch(() => { });
         // Keep currentUser in sync with users array
         if (currentUser) {
             const fresh = users.find(u => u.id === currentUser.id);
