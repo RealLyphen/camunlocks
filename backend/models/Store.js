@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Unified Schema approach for rapid migration from StoreContext
 const storeSchema = new mongoose.Schema({
@@ -15,6 +15,4 @@ const storeSchema = new mongoose.Schema({
     verificationLog: { type: Array, default: [] }
 }, { strict: false, timestamps: true });
 
-const Store = mongoose.model('Store', storeSchema);
-
-module.exports = { Store };
+export const Store = mongoose.model('Store', storeSchema);
