@@ -144,6 +144,13 @@ const CustomerDrawer: React.FC<{ customer: any; onClose: () => void }> = ({ cust
         alert(`Successfully added $${amt.toFixed(2)} store credit to ${customer.email}.`);
     };
 
+    const handleUpdateTracking = (orderId: string, trackingId: string) => {
+        const updatedOrders = customer.orders.map((o: any) =>
+            o.id === orderId ? { ...o, trackingId } : o
+        );
+        updateUser(customer.id, { orders: updatedOrders });
+    };
+
     const bg = avatarColor(customer.email);
 
     return (
@@ -242,6 +249,25 @@ const CustomerDrawer: React.FC<{ customer: any; onClose: () => void }> = ({ cust
                                         <span style={{ color: '#4ade80', fontWeight: 700 }}>${o.total.toFixed(2)}</span>
                                         <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(16,185,129,0.15)', color: '#10b981', fontSize: '0.7rem' }}>PAID</span>
                                     </div>
+                                    {o.items.some((i: any) => i.isPhysical) && (
+                                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                            <div style={{ fontSize: '0.75rem', color: '#a1a1aa', marginBottom: 4 }}>Shipping Address:</div>
+                                            <div style={{ fontSize: '0.85rem', color: '#e4e4e7', marginBottom: 12, whiteSpace: 'pre-wrap', background: 'rgba(0,0,0,0.2)', padding: 8, borderRadius: 6, border: '1px solid rgba(255,255,255,0.04)' }}>
+                                                {o.shippingAddress || 'No address provided'}
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#a1a1aa', marginBottom: 4 }}>Tracking ID / Link:</div>
+                                            <div style={{ display: 'flex', gap: 8 }}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter tracking ID or URL..."
+                                                    defaultValue={o.trackingId || ''}
+                                                    onBlur={e => handleUpdateTracking(o.id, e.target.value)}
+                                                    style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, padding: '6px 10px', color: '#fff', fontSize: '0.8rem', outline: 'none' }}
+                                                />
+                                            </div>
+                                            <div style={{ fontSize: '0.65rem', color: '#71717a', marginTop: 4 }}>Saves automatically when you click away.</div>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}

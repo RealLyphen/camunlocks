@@ -640,6 +640,15 @@
     margin-top: auto;
 }
 
+.btn-green-glow {
+    box-shadow: 0 0 15px rgba(0, 214, 50, 0.4) !important;
+    transition: all 0.25s ease;
+}
+
+.btn-green-glow:hover {
+    box-shadow: 0 0 25px rgba(0, 214, 50, 0.7) !important;
+}
+
 .co-proceed-btn::before {
     content: '';
     position: absolute;

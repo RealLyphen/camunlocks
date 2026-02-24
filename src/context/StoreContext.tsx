@@ -34,6 +34,7 @@ interface StoreSettings {
     };
     socials: {
         discord?: string;
+        discordServerId?: string;
         telegram?: string;
         youtube?: string;
         tiktok?: string;
@@ -41,6 +42,15 @@ interface StoreSettings {
     seo: {
         title: string;
         description: string;
+    };
+    apps?: {
+        crispWebsiteId?: string;
+        telegramUsername?: string;
+        telegramUsername?: string;
+        discordUrl?: string;
+        appStoreConnectApiKey?: string;
+        appStoreConnectIssuerId?: string;
+        appStoreConnectKid?: string;
     };
     notifications?: {
         orderCompletion: { dashboard: boolean; email: boolean; emailAddress: string; discord: string; telegramBotToken: string; telegramChatId: string };
@@ -58,18 +68,24 @@ export interface CartItem {
     image: string;
     originalPrice?: number; // original price before coupon
     appliedCoupon?: string; // coupon code already applied to this item
+    isPhysical?: boolean;
+    gatewayPrices?: Record<string, number>;
 }
 
 export interface ProductVariant {
     id: string;
     name: string;
     price: number;
+    compareAtPrice?: number;
+    stockCap?: number | null;
+    gatewayPrices?: Record<string, number>;
 }
 
 export interface Product {
     id: string;
     name: string;
     price: number;
+    compareAtPrice?: number; // Price slash
     description: string;
     imageUrl?: string;
     images?: string[];
@@ -80,6 +96,11 @@ export interface Product {
     stockCap?: number | null;
     payWhatYouWant?: boolean;
     variants?: ProductVariant[];
+    isPhysical?: boolean; // Physical product toggle
+    gatewayPrices?: Record<string, number>;
+    features?: string[]; // Dynamic features array
+    requirements?: string[]; // Dynamic requirements array
+    confirmations?: string[]; // Array of strings, each representing a mandatory checkbox
     metaTitle?: string;
     metaDescription?: string;
     categoryIds: string[];
@@ -181,6 +202,9 @@ export interface PaymentGateway {
     gmailAppPassword?: string;
     autoDetect?: boolean;
     pollingInterval?: number;
+    // Cryptomus
+    cryptomusMerchantId?: string;
+    cryptomusPaymentApiKey?: string;
     // Customer Balance
     clientToken?: string;
 }
@@ -212,12 +236,14 @@ export interface PaymentSettings {
 export interface Order {
     id: string;
     date: string;
-    items: { name: string; price: number; quantity: number; image: string }[];
+    items: { name: string; price: number; quantity: number; image: string; isPhysical?: boolean }[];
     total: number;
     status: 'completed' | 'pending' | 'cancelled';
     paymentMethod: string;
     orderNote?: string;
     customerEmail?: string;
+    shippingAddress?: string; // Physical product requirement
+    trackingId?: string; // Admin populated tracking
     adminNotes?: { id: string; text: string; createdAt: string }[];
 }
 
@@ -335,6 +361,14 @@ const defaultSettings: StoreSettings = {
     seo: {
         title: 'Lyphen',
         description: 'Best game store'
+    },
+    apps: {
+        crispWebsiteId: '',
+        telegramUsername: '',
+        discordUrl: '',
+        appStoreConnectApiKey: '',
+        appStoreConnectIssuerId: '',
+        appStoreConnectKid: '',
     },
     notifications: {
         orderCompletion: { dashboard: false, email: false, emailAddress: '', discord: '', telegramBotToken: '', telegramChatId: '' },

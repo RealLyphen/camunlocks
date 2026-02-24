@@ -13,6 +13,6 @@ const storeSchema = new mongoose.Schema({
     paymentSettings: { type: Object, default: {} },
     users: { type: Array, default: [] },
     verificationLog: { type: Array, default: [] }
-}, { strict: false, timestamps: true });
+}, { strict: false, timestamps: true, versionKey: false });
 
 export const Store = mongoose.model('Store', storeSchema);

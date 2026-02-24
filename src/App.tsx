@@ -12,6 +12,8 @@ import Maintenance from './components/Maintenance'
 import RecentPurchasePopup from './components/RecentPurchasePopup'
 import AnnouncementBar from './components/AnnouncementBar'
 import StorePopup from './components/StorePopup'
+import CrispChat from './components/CrispChat'
+import TelegramWidget from './components/TelegramWidget'
 import { useStore } from './context/StoreContext'
 import './App.css'
 
@@ -25,6 +27,7 @@ import CashAppVerification from './admin/pages/FraudShield/CashAppVerification';
 import DeliveryEmail from './admin/pages/Settings/DeliveryEmail';
 import Notifications from './admin/pages/Settings/Notifications';
 import PaymentMethods from './admin/pages/Settings/PaymentMethods';
+import AppStore from './admin/pages/Settings/AppStore';
 import CustomizeStore from './admin/pages/Settings/CustomizeStore';
 import Products from './admin/pages/Products/Products';
 import CreateProduct from './admin/pages/Products/CreateProduct';
@@ -144,6 +147,8 @@ function App() {
           <StorePopup />
           <AnnouncementBar />
           <Navbar />
+          <CrispChat />
+          <TelegramWidget />
         </>
       )}
       <Routes>
@@ -180,6 +185,7 @@ function App() {
           <Route path="settings/email" element={<DeliveryEmail />} />
           <Route path="settings/notifications" element={<Notifications />} />
           <Route path="settings/payments" element={<PaymentMethods />} />
+          <Route path="settings/apps" element={<AppStore />} />
           <Route path="settings/customize" element={<CustomizeStore />} />
           <Route path="settings/builder" element={<PageBuilder />} />
           <Route path="settings/seo" element={<SEO />} />

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaShieldAlt, FaBolt, FaCheck, FaHeadset, FaLock, FaStar, FaTag } from 'react-icons/fa';
 import { useStore, type CartItem } from '../context/StoreContext';
@@ -21,6 +21,18 @@ const ProductPage: React.FC = () => {
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
     const [selectedImage, setSelectedImage] = useState(0);
 
+    const [confirmationsChecked, setConfirmationsChecked] = useState<boolean[]>([]);
+
+    useEffect(() => {
+        if (product?.confirmations) {
+            setConfirmationsChecked(new Array(product.confirmations.length).fill(false));
+        }
+    }, [product?.confirmations]);
+
+    const allConfirmed = product?.confirmations?.length
+        ? confirmationsChecked.length === product.confirmations.length && confirmationsChecked.every(Boolean)
+        : true;
+
     // Coupon State
     const [showCouponPopup, setShowCouponPopup] = useState(false);
     const [couponCode, setCouponCode] = useState('');
@@ -39,6 +51,33 @@ const ProductPage: React.FC = () => {
             });
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        if (!product) return;
+
+        document.title = `${product.name} | CAM Unlocks`;
+
+        const setMetaTag = (property: string, content: string) => {
+            let meta = document.querySelector(`meta[property="${property}"]`);
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', property);
+                document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+        };
+
+        const description = product.description ? product.description.substring(0, 150).replace(/\n/g, ' ') + '...' : 'Premium product by CAM Unlocks';
+        const image = product.images?.[0] || product.imageUrl || '';
+
+        setMetaTag('og:title', product.name);
+        setMetaTag('og:description', description);
+        setMetaTag('og:image', image);
+        setMetaTag('og:url', window.location.href);
+        setMetaTag('og:type', 'product');
+
+        return () => { document.title = 'CAM Unlocks'; };
+    }, [product]);
 
     // If product not found, show 404
     if (!product) {
@@ -78,9 +117,9 @@ const ProductPage: React.FC = () => {
             name: v.name,
             sub: '',
             price: v.price,
-            original: v.price * 1.3,  // simulate a "was" price
+            original: v.compareAtPrice || null,
         }))
-        : [{ id: 0, name: product.name, sub: '', price: product.price, original: product.price * 1.3 }];
+        : [{ id: 0, name: product.name, sub: '', price: product.price, original: product.compareAtPrice || null }];
 
     // Get category names for this product
     const productCategories = categories.filter(c => product.categoryIds.includes(c.id));
@@ -116,8 +155,10 @@ const ProductPage: React.FC = () => {
             price: effectivePrice,
             quantity: quantity,
             image: allImages[0],
+            isPhysical: product.isPhysical,
+            gatewayPrices: currentVariant?.gatewayPrices || product.gatewayPrices,
             ...(appliedDiscount > 0 ? { originalPrice: currentVariant.price, appliedCoupon: couponCode } : {})
-        });
+        } as any);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 2000);
     };
@@ -177,27 +218,22 @@ const ProductPage: React.FC = () => {
                             <div className="tab-content">
                                 {activeTab === 'description' && (
                                     <div>
-                                        <p>{product.description || 'No description available.'}</p>
-                                        {product.shortDescription && (
-                                            <p style={{ marginTop: 12, color: '#a1a1aa', fontSize: '0.9rem' }}>{product.shortDescription}</p>
-                                        )}
+                                        <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{product.description || 'No description available.'}</p>
                                     </div>
                                 )}
                                 {activeTab === 'features' && (
                                     <div className="feature-list">
-                                        <div className="feature-item"><FaCheck /> Premium Quality</div>
-                                        <div className="feature-item"><FaCheck /> Instant Delivery</div>
-                                        <div className="feature-item"><FaCheck /> 24/7 Support</div>
-                                        <div className="feature-item"><FaCheck /> Safe & Secure</div>
-                                        <div className="feature-item"><FaCheck /> Satisfaction Guaranteed</div>
+                                        {(product.features && product.features.length > 0 ? product.features : ['Premium Quality', 'Instant Delivery', '24/7 Support', 'Safe & Secure', 'Satisfaction Guaranteed']).map((f, i) => (
+                                            <div key={i} className="feature-item"><FaCheck style={{ flexShrink: 0, marginTop: 3 }} /> <span>{f}</span></div>
+                                        ))}
                                     </div>
                                 )}
                                 {activeTab === 'requirements' && (
                                     <div>
-                                        <ul style={{ listStyle: 'disc', paddingLeft: '20px', color: '#a1a1aa' }}>
-                                            <li>Active game account required</li>
-                                            <li>Stable Internet Connection</li>
-                                            <li>Join our Discord for instructions after purchase</li>
+                                        <ul style={{ listStyle: 'disc', paddingLeft: '20px', color: '#a1a1aa', lineHeight: 1.6 }}>
+                                            {(product.requirements && product.requirements.length > 0 ? product.requirements : ['Active game account required', 'Stable Internet Connection', 'Join our Discord for instructions after purchase']).map((r, i) => (
+                                                <li key={i}>{r}</li>
+                                            ))}
                                         </ul>
                                     </div>
                                 )}
@@ -218,7 +254,9 @@ const ProductPage: React.FC = () => {
                                 </div>
                                 <div className="status-badges">
                                     <span className="status-badge undetected"><FaShieldAlt /> Undetected</span>
-                                    <span className="status-badge instant"><FaBolt /> Instant Delivery</span>
+                                    <span className="status-badge instant">
+                                        <FaBolt /> {product.isPhysical ? 'Physical Delivery' : 'Instant Delivery'}
+                                    </span>
                                 </div>
                                 {productCategories.length > 0 && (
                                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
@@ -238,7 +276,7 @@ const ProductPage: React.FC = () => {
 
                             <div className="price-display">
                                 <span className="current-price">${currentVariant.price.toFixed(2)}</span>
-                                {currentVariant.original && (
+                                {currentVariant.original && currentVariant.original > currentVariant.price && (
                                     <>
                                         <span className="original-price">${currentVariant.original.toFixed(2)}</span>
                                         <span className="discount-badge">SAVE {Math.round((1 - currentVariant.price / currentVariant.original) * 100)}%</span>
@@ -276,26 +314,67 @@ const ProductPage: React.FC = () => {
                                 </div>
                             </div>
 
+                            {product.confirmations && product.confirmations.length > 0 && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+                                    {product.confirmations.map((confText, idx) => (
+                                        <div key={idx} style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '12px 16px', borderRadius: 8 }}>
+                                            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={confirmationsChecked[idx] || false}
+                                                    onChange={e => {
+                                                        const newArr = [...confirmationsChecked];
+                                                        newArr[idx] = e.target.checked;
+                                                        setConfirmationsChecked(newArr);
+                                                    }}
+                                                    style={{ marginTop: 4, cursor: 'pointer', accentColor: '#ef4444' }}
+                                                />
+                                                <span style={{ color: '#fca5a5', fontSize: '0.85rem', lineHeight: 1.4 }}>
+                                                    {confText}
+                                                </span>
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <div className="action-buttons">
-                                <button className={`add-to-cart-btn ${isAdded ? 'added' : ''}`} onClick={handleAddToCart}>
+                                <button
+                                    className={`add-to-cart-btn ${isAdded ? 'added' : ''}`}
+                                    onClick={handleAddToCart}
+                                    disabled={!allConfirmed}
+                                    style={{
+                                        opacity: (!allConfirmed) ? 0.5 : 1,
+                                        cursor: (!allConfirmed) ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
                                     {isAdded ? <FaCheck /> : <FaShoppingCart />}
                                     {isAdded ? 'Added to Cart' : 'Add To Cart'}
                                 </button>
-                                <button className="buy-now-btn" onClick={() => {
-                                    const perUnitDiscount = appliedDiscount / quantity;
-                                    const effectivePrice = appliedDiscount > 0
-                                        ? Math.max(0, currentVariant.price - perUnitDiscount)
-                                        : currentVariant.price;
-                                    setDirectBuyItem({
-                                        id: selectedVariant,
-                                        name: `${product.name} — ${currentVariant.name}`,
-                                        price: effectivePrice,
-                                        quantity,
-                                        image: allImages[0],
-                                        ...(appliedDiscount > 0 ? { originalPrice: currentVariant.price, appliedCoupon: couponCode } : {})
-                                    });
-                                    setIsCheckoutOpen(true);
-                                }}>
+                                <button
+                                    className="buy-now-btn"
+                                    disabled={!allConfirmed}
+                                    style={{
+                                        opacity: (!allConfirmed) ? 0.5 : 1,
+                                        cursor: (!allConfirmed) ? 'not-allowed' : 'pointer'
+                                    }}
+                                    onClick={() => {
+                                        const perUnitDiscount = appliedDiscount / quantity;
+                                        const effectivePrice = appliedDiscount > 0
+                                            ? Math.max(0, currentVariant.price - perUnitDiscount)
+                                            : currentVariant.price;
+                                        setDirectBuyItem({
+                                            id: selectedVariant,
+                                            name: `${product.name} — ${currentVariant.name}`,
+                                            price: effectivePrice,
+                                            quantity,
+                                            image: allImages[0],
+                                            isPhysical: product.isPhysical,
+                                            ...(appliedDiscount > 0 ? { originalPrice: currentVariant.price, appliedCoupon: couponCode } : {})
+                                        });
+                                        setIsCheckoutOpen(true);
+                                    }}
+                                >
                                     <FaBolt /> Buy Now - ${finalTotal}
                                 </button>
                             </div>

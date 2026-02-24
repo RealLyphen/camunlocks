@@ -7,8 +7,109 @@ import {
     Save, ArrowLeft, Plus, X, Check, Search,
     Upload, DollarSign, EyeOff, Star, Package,
     Globe, Tag, Layers, Image as ImageIcon, FileText,
-    Settings, Sparkles, Trash2, GripVertical, Link as LinkIcon
+    Settings, Sparkles, Trash2, GripVertical, Link as LinkIcon, AlertTriangle
 } from 'lucide-react';
+import {
+    DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+    arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+/* ─── Sortable Variant Item ─── */
+const SortableVariantItem = ({ variant, index, updateVariant, removeVariant }: any) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: variant.id });
+    const [expanded, setExpanded] = useState(false);
+    const style = { transform: CSS.Transform.toString(transform), transition };
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{ duration: 0.25 }}
+            style={{
+                ...style,
+                marginBottom: 10,
+                borderRadius: 12, background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.06)',
+            }}
+            ref={setNodeRef}
+        >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px' }}>
+                <div {...attributes} {...listeners} style={{ cursor: 'grab', display: 'flex' }}>
+                    <GripVertical size={16} style={{ color: '#3f3f46', flexShrink: 0 }} />
+                </div>
+                <span style={{
+                    width: 26, height: 26, borderRadius: 6,
+                    background: 'rgba(79,104,248,0.12)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.75rem', fontWeight: 600, color: '#818cf8', flexShrink: 0,
+                }}>
+                    {index + 1}
+                </span>
+                <input
+                    type="text" className="admin-input" style={{ flex: 1 }}
+                    value={variant.name} onChange={e => updateVariant(variant.id, { name: e.target.value })}
+                    placeholder="Variant name"
+                />
+                <div className="relative" style={{ width: 120, flexShrink: 0 }}>
+                    <DollarSign size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600" />
+                    <input
+                        type="number" className="admin-input" style={{ paddingLeft: 28 }}
+                        value={variant.price} onChange={e => updateVariant(variant.id, { price: parseFloat(e.target.value) || 0 })}
+                        min="0" step="0.01"
+                    />
+                </div>
+                <button
+                    onClick={() => setExpanded(!expanded)}
+                    style={{
+                        background: expanded ? 'rgba(79,104,248,0.15)' : 'rgba(255,255,255,0.05)',
+                        border: `1px solid ${expanded ? 'rgba(79,104,248,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                        color: expanded ? '#818cf8' : '#a1a1aa', borderRadius: 8, padding: '6px 10px',
+                        fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+                    }}
+                >
+                    {expanded ? 'Close' : 'Advanced'}
+                </button>
+                <button
+                    onClick={() => removeVariant(variant.id)}
+                    style={{
+                        background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)',
+                        color: '#f87171', borderRadius: 8, padding: 6, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.2s', flexShrink: 0,
+                    }}
+                ><Trash2 size={14} /></button>
+            </div>
+
+            {expanded && (
+                <div style={{ padding: '0 16px 16px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: 4 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
+                        <div>
+                            <label style={{ fontSize: '0.75rem', color: '#a1a1aa', display: 'block', marginBottom: 6 }}>Compare At Price ($) (Optional)</label>
+                            <input
+                                type="number" className="admin-input"
+                                value={variant.compareAtPrice || ''} onChange={e => updateVariant(variant.id, { compareAtPrice: parseFloat(e.target.value) || undefined })}
+                                min="0" step="0.01" placeholder="E.g. 50.00"
+                            />
+                        </div>
+                        <div>
+                            <label style={{ fontSize: '0.75rem', color: '#a1a1aa', display: 'block', marginBottom: 6 }}>Stock Cap (Leave empty for unltd)</label>
+                            <input
+                                type="number" className="admin-input"
+                                value={variant.stockCap || ''} onChange={e => updateVariant(variant.id, { stockCap: parseInt(e.target.value) || null })}
+                                min="0" placeholder="E.g. 100"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+        </motion.div>
+    );
+};
 
 /* ─── Helper: slug from name ─── */
 const slugify = (text: string) =>
@@ -144,6 +245,7 @@ const CreateProduct: React.FC = () => {
     const [slug, setSlug] = useState('');
     const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
     const [price, setPrice] = useState('');
+    const [compareAtPrice, setCompareAtPrice] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [description, setDescription] = useState('');
     const [status, setStatus] = useState<'active' | 'draft' | 'hidden'>('active');
@@ -154,6 +256,17 @@ const CreateProduct: React.FC = () => {
     const [capStock, setCapStock] = useState(false);
     const [stockQty, setStockQty] = useState('');
     const [payWhatYouWant, setPayWhatYouWant] = useState(false);
+    const [isPhysical, setIsPhysical] = useState(false);
+
+    // — Confirmations
+    const [confirmations, setConfirmations] = useState<string[]>([]);
+    const [confirmationInput, setConfirmationInput] = useState('');
+
+    // — Features & Requirements
+    const [features, setFeatures] = useState<string[]>([]);
+    const [featureInput, setFeatureInput] = useState('');
+    const [requirements, setRequirements] = useState<string[]>([]);
+    const [requirementInput, setRequirementInput] = useState('');
 
     // — Images
     const [images, setImages] = useState<string[]>([]);
@@ -170,6 +283,22 @@ const CreateProduct: React.FC = () => {
     // — SEO
     const [metaTitle, setMetaTitle] = useState('');
     const [metaDescription, setMetaDescription] = useState('');
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            setVariants((items) => {
+                const oldIndex = items.findIndex((i) => i.id === active.id);
+                const newIndex = items.findIndex((i) => i.id === over.id);
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    };
 
     /* ─── Handlers ─── */
     const handleNameChange = (val: string) => {
@@ -231,6 +360,7 @@ const CreateProduct: React.FC = () => {
         addProduct({
             name,
             price: parseFloat(price),
+            compareAtPrice: compareAtPrice ? parseFloat(compareAtPrice) : undefined,
             description,
             imageUrl: images[0] || '',
             images,
@@ -241,6 +371,10 @@ const CreateProduct: React.FC = () => {
             stockCap: capStock ? parseInt(stockQty) || null : null,
             payWhatYouWant,
             variants: variants.length > 0 ? variants : undefined,
+            isPhysical,
+            confirmations,
+            features,
+            requirements,
             metaTitle: metaTitle || name,
             metaDescription,
             categoryIds: selectedCategoryIds,
@@ -343,6 +477,65 @@ const CreateProduct: React.FC = () => {
                             checked={payWhatYouWant}
                             onChange={setPayWhatYouWant}
                         />
+                        <Toggle
+                            label="Physical Product"
+                            sublabel="Requires a shipping address during checkout"
+                            icon={<Package size={16} />}
+                            checked={isPhysical}
+                            onChange={setIsPhysical}
+                        />
+                    </Section>
+
+                    {/* ── Confirmations ── */}
+                    <Section
+                        icon={<AlertTriangle size={18} color="#818cf8" />}
+                        title="Confirmations"
+                        subtitle="Customer must check these boxes before adding to cart"
+                        delay={0.08}
+                    >
+                        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+                            <input
+                                type="text"
+                                className="admin-input"
+                                placeholder="Add a confirmation e.g., 'I am over 18'..."
+                                value={confirmationInput}
+                                onChange={e => setConfirmationInput(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter' && confirmationInput.trim()) {
+                                        e.preventDefault();
+                                        if (!confirmations.includes(confirmationInput.trim())) setConfirmations([...confirmations, confirmationInput.trim()]);
+                                        setConfirmationInput('');
+                                    }
+                                }}
+                            />
+                            <button
+                                onClick={e => {
+                                    e.preventDefault();
+                                    if (confirmationInput.trim() && !confirmations.includes(confirmationInput.trim())) {
+                                        setConfirmations([...confirmations, confirmationInput.trim()]);
+                                        setConfirmationInput('');
+                                    }
+                                }}
+                                className="btn-secondary"
+                            >
+                                Add
+                            </button>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            {confirmations.map((c, i) => (
+                                <div key={i} style={{
+                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                    padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.06)',
+                                }}>
+                                    <span style={{ fontSize: '0.85rem', color: '#d4d4d8', flex: 1 }}>{c}</span>
+                                    <button
+                                        onClick={(e) => { e.preventDefault(); setConfirmations(confirmations.filter(_ => _ !== c)); }}
+                                        style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}
+                                    ><X size={14} /></button>
+                                </div>
+                            ))}
+                        </div>
                     </Section>
 
                     {/* ── 2. Product Information ── */}
@@ -400,31 +593,37 @@ const CreateProduct: React.FC = () => {
                                 <div className="relative">
                                     <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                                     <input
-                                        type="number"
-                                        className="admin-input"
-                                        placeholder="0.00"
-                                        style={{ paddingLeft: 36 }}
-                                        value={price}
-                                        onChange={e => setPrice(e.target.value)}
-                                        min="0"
-                                        step="0.01"
+                                        type="number" className="admin-input" placeholder="0.00"
+                                        style={{ paddingLeft: 36 }} value={price} onChange={e => setPrice(e.target.value)}
+                                        min="0" step="0.01"
                                     />
                                 </div>
                             </div>
-
                             <div className="form-group" style={{ marginBottom: 0 }}>
-                                <label>Status</label>
-                                <select
-                                    className="admin-input"
-                                    value={status}
-                                    onChange={e => setStatus(e.target.value as 'active' | 'draft' | 'hidden')}
-                                    style={{ cursor: 'pointer', appearance: 'none' }}
-                                >
-                                    <option value="active">🟢 Active</option>
-                                    <option value="draft">🟡 Draft</option>
-                                    <option value="hidden">🔴 Hidden</option>
-                                </select>
+                                <label>Compare At Price (Sale)</label>
+                                <div className="relative">
+                                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                                    <input
+                                        type="number" className="admin-input" placeholder="0.00"
+                                        style={{ paddingLeft: 36 }} value={compareAtPrice} onChange={e => setCompareAtPrice(e.target.value)}
+                                        min="0" step="0.01"
+                                    />
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="form-group" style={{ marginTop: 20 }}>
+                            <label>Status</label>
+                            <select
+                                className="admin-input"
+                                value={status}
+                                onChange={e => setStatus(e.target.value as 'active' | 'draft' | 'hidden')}
+                                style={{ cursor: 'pointer', appearance: 'none' }}
+                            >
+                                <option value="active">🟢 Active</option>
+                                <option value="draft">🟡 Draft</option>
+                                <option value="hidden">🔴 Hidden</option>
+                            </select>
                         </div>
                     </Section>
 
@@ -472,6 +671,110 @@ const CreateProduct: React.FC = () => {
                         />
                     </Section>
 
+                    {/* ── Features ── */}
+                    <Section
+                        icon={<Check size={18} color="#818cf8" />}
+                        title="Product Features"
+                        subtitle="List key features of the product"
+                        delay={0.22}
+                    >
+                        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+                            <input
+                                type="text"
+                                className="admin-input"
+                                placeholder="Add a feature..."
+                                value={featureInput}
+                                onChange={e => setFeatureInput(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter' && featureInput.trim()) {
+                                        e.preventDefault();
+                                        if (!features.includes(featureInput.trim())) setFeatures([...features, featureInput.trim()]);
+                                        setFeatureInput('');
+                                    }
+                                }}
+                            />
+                            <button
+                                onClick={e => {
+                                    e.preventDefault();
+                                    if (featureInput.trim() && !features.includes(featureInput.trim())) {
+                                        setFeatures([...features, featureInput.trim()]);
+                                        setFeatureInput('');
+                                    }
+                                }}
+                                className="btn-secondary"
+                            >
+                                Add
+                            </button>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            {features.map((f, i) => (
+                                <div key={i} style={{
+                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                    padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.06)',
+                                }}>
+                                    <span style={{ fontSize: '0.85rem', color: '#d4d4d8' }}>{f}</span>
+                                    <button
+                                        onClick={(e) => { e.preventDefault(); setFeatures(features.filter(_ => _ !== f)); }}
+                                        style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}
+                                    ><X size={14} /></button>
+                                </div>
+                            ))}
+                        </div>
+                    </Section>
+
+                    {/* ── Requirements ── */}
+                    <Section
+                        icon={<AlertTriangle size={18} color="#818cf8" />}
+                        title="System Requirements"
+                        subtitle="List requirements needed to use the product"
+                        delay={0.23}
+                    >
+                        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+                            <input
+                                type="text"
+                                className="admin-input"
+                                placeholder="Add a requirement..."
+                                value={requirementInput}
+                                onChange={e => setRequirementInput(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter' && requirementInput.trim()) {
+                                        e.preventDefault();
+                                        if (!requirements.includes(requirementInput.trim())) setRequirements([...requirements, requirementInput.trim()]);
+                                        setRequirementInput('');
+                                    }
+                                }}
+                            />
+                            <button
+                                onClick={e => {
+                                    e.preventDefault();
+                                    if (requirementInput.trim() && !requirements.includes(requirementInput.trim())) {
+                                        setRequirements([...requirements, requirementInput.trim()]);
+                                        setRequirementInput('');
+                                    }
+                                }}
+                                className="btn-secondary"
+                            >
+                                Add
+                            </button>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            {requirements.map((r, i) => (
+                                <div key={i} style={{
+                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                    padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.06)',
+                                }}>
+                                    <span style={{ fontSize: '0.85rem', color: '#d4d4d8' }}>{r}</span>
+                                    <button
+                                        onClick={(e) => { e.preventDefault(); setRequirements(requirements.filter(_ => _ !== r)); }}
+                                        style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}
+                                    ><X size={14} /></button>
+                                </div>
+                            ))}
+                        </div>
+                    </Section>
+
                     {/* ── 5. Variants ── */}
                     <Section
                         icon={<Layers size={18} color="#818cf8" />}
@@ -479,75 +782,28 @@ const CreateProduct: React.FC = () => {
                         subtitle="Different versions of this product"
                         delay={0.25}
                     >
-                        <AnimatePresence mode="popLayout">
-                            {variants.map((v, i) => (
-                                <motion.div
-                                    key={v.id}
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                    transition={{ duration: 0.25 }}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: 12,
-                                        padding: '14px 16px', marginBottom: 10,
-                                        borderRadius: 12,
-                                        background: 'rgba(255,255,255,0.03)',
-                                        border: '1px solid rgba(255,255,255,0.06)',
-                                    }}
-                                >
-                                    <GripVertical size={16} style={{ color: '#3f3f46', cursor: 'grab', flexShrink: 0 }} />
-                                    <span style={{
-                                        width: 26, height: 26, borderRadius: 6,
-                                        background: 'rgba(79,104,248,0.12)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        fontSize: '0.75rem', fontWeight: 600, color: '#818cf8', flexShrink: 0,
-                                    }}>
-                                        {i + 1}
-                                    </span>
-                                    <input
-                                        type="text"
-                                        className="admin-input"
-                                        style={{ flex: 1 }}
-                                        value={v.name}
-                                        onChange={e => updateVariant(v.id, { name: e.target.value })}
-                                        placeholder="Variant name"
-                                    />
-                                    <div className="relative" style={{ width: 120, flexShrink: 0 }}>
-                                        <DollarSign size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600" />
-                                        <input
-                                            type="number"
-                                            className="admin-input"
-                                            style={{ paddingLeft: 28 }}
-                                            value={v.price}
-                                            onChange={e => updateVariant(v.id, { price: parseFloat(e.target.value) || 0 })}
-                                            min="0"
-                                            step="0.01"
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={variants.map(v => v.id)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                <AnimatePresence mode="popLayout">
+                                    {variants.map((v, i) => (
+                                        <SortableVariantItem
+                                            key={v.id}
+                                            variant={v}
+                                            index={i}
+                                            updateVariant={updateVariant}
+                                            removeVariant={() => removeVariant(v.id)}
                                         />
-                                    </div>
-                                    <button
-                                        onClick={() => removeVariant(v.id)}
-                                        style={{
-                                            background: 'rgba(239,68,68,0.08)',
-                                            border: '1px solid rgba(239,68,68,0.15)',
-                                            color: '#f87171', borderRadius: 8,
-                                            padding: 6, cursor: 'pointer',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            transition: 'all 0.2s',
-                                            flexShrink: 0,
-                                        }}
-                                        onMouseEnter={e => {
-                                            (e.target as HTMLElement).style.background = 'rgba(239,68,68,0.18)';
-                                        }}
-                                        onMouseLeave={e => {
-                                            (e.target as HTMLElement).style.background = 'rgba(239,68,68,0.08)';
-                                        }}
-                                    >
-                                        <Trash2 size={14} />
-                                    </button>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                                    ))}
+                                </AnimatePresence>
+                            </SortableContext>
+                        </DndContext>
 
                         <motion.button
                             whileHover={{ scale: 1.01 }}
@@ -891,8 +1147,8 @@ const CreateProduct: React.FC = () => {
                         </div>
                     </motion.div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

@@ -169,6 +169,7 @@ const gatewayIcons: Record<string, { icon: React.ReactNode; bg: string; accent: 
     'coinbase': { icon: <span style={{ fontSize: '1.3rem' }}>🪙</span>, bg: 'linear-gradient(135deg, #0052FF, #003BB5)', accent: '#0052FF' },
     'cashapp': { icon: <span style={{ fontSize: '1.3rem' }}>💲</span>, bg: 'linear-gradient(135deg, #00D632, #00A825)', accent: '#00D632' },
     'customer-balance': { icon: <span style={{ fontSize: '1.3rem' }}>👛</span>, bg: 'linear-gradient(135deg, #8B5CF6, #6D28D9)', accent: '#8B5CF6' },
+    'cryptomus': { icon: <span style={{ fontSize: '1.3rem', fontWeight: 800 }}>C</span>, bg: 'linear-gradient(135deg, #10B981, #059669)', accent: '#10B981' },
     'flick': { icon: <span style={{ fontWeight: 900, fontSize: '1.1rem', color: '#fff' }}>F</span>, bg: 'linear-gradient(135deg, #007f31, #00b347)', accent: '#007f31' },
 };
 
@@ -503,6 +504,34 @@ const FlickConfig: React.FC<{ gw: PaymentGateway; update: (p: Partial<PaymentGat
     </div>
 );
 
+const CryptomusConfig: React.FC<{ gw: PaymentGateway; update: (p: Partial<PaymentGateway>) => void }> = ({ gw, update }) => (
+    <div>
+        <TestModeBanner on={!!gw.testMode} onToggle={() => update({ testMode: !gw.testMode })} />
+        <InfoBox color="#10B981">
+            Get your Merchant ID and Payment API Key from the{' '}
+            <a href="https://dash.cryptomus.com/merchants" target="_blank" rel="noreferrer" style={{ color: '#34d399' }}>
+                Cryptomus Merchant Dashboard
+            </a>.
+        </InfoBox>
+        <div style={grid2}>
+            <div>
+                <div style={label}>Merchant ID</div>
+                <input value={gw.cryptomusMerchantId || ''} onChange={e => update({ cryptomusMerchantId: e.target.value })}
+                    placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style={inp} />
+            </div>
+            <div>
+                <div style={label}>Payment API Key</div>
+                <SecretInput value={gw.cryptomusPaymentApiKey || ''} onChange={v => update({ cryptomusPaymentApiKey: v })}
+                    placeholder="eyJhbGciOiJIUzUxMiIsInR5c..." />
+            </div>
+        </div>
+        <CopyRow label="IPN Webhook URL (register in APIs & Webhooks)" value="https://api.lyphen.camunlocks.cx/webhooks/cryptomus" />
+        <a href="https://dash.cryptomus.com" target="_blank" rel="noreferrer" style={{ ...btnSm(), textDecoration: 'none', display: 'inline-flex' }}>
+            <ExternalLink size={13} /> Open Cryptomus Dashboard
+        </a>
+    </div>
+);
+
 /* ── App Marketplace ── */
 const APP_LIST = [
     {
@@ -513,6 +542,14 @@ const APP_LIST = [
         tags: ['NZ', 'Open Banking', 'Direct Transfer'],
         accent: '#007f31',
     },
+    {
+        id: 'cryptomus',
+        name: 'Cryptomus',
+        tagline: 'Accept cryptocurrency payments globally.',
+        url: 'https://cryptomus.com',
+        tags: ['Crypto', 'Global', 'Web3'],
+        accent: '#10B981',
+    }
 ];
 
 const AppMarketplace: React.FC<{
@@ -621,6 +658,7 @@ const PaymentMethods: React.FC = () => {
             case 'cashapp': return <CashAppConfig gw={gw} update={up} />;
             case 'customer-balance': return <CustomerBalanceConfig />;
             case 'flick': return <FlickConfig gw={gw} update={up} />;
+            case 'cryptomus': return <CryptomusConfig gw={gw} update={up} />;
             default: return null;
         }
     };

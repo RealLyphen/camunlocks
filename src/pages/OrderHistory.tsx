@@ -172,6 +172,31 @@ const OrderHistory: React.FC = () => {
                                 ))}
                             </div>
 
+                            {/* Order Tracking */}
+                            {order.items?.some((i: any) => i.isPhysical) && (
+                                <div className="oh-order-tracking" style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)', fontSize: '0.85rem' }}>
+                                    <div style={{ color: '#a1a1aa', marginBottom: 4, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>Shipping Address</div>
+                                    <div style={{ color: '#e4e4e7', marginBottom: 12, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{order.shippingAddress || 'Not provided'}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div>
+                                            <div style={{ color: '#a1a1aa', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Tracking Info</div>
+                                            <div style={{ fontWeight: 600 }}>
+                                                {order.trackingId ? (
+                                                    order.trackingId.startsWith('http') ? (
+                                                        <a href={order.trackingId} target="_blank" rel="noreferrer" style={{ color: '#818cf8', textDecoration: 'none' }}>{order.trackingId}</a>
+                                                    ) : (
+                                                        <span style={{ color: '#818cf8', letterSpacing: 1 }}>{order.trackingId}</span>
+                                                    )
+                                                ) : (
+                                                    <span style={{ color: '#71717a' }}>Coming soon...</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div style={{ fontSize: '1.2rem' }}>📦</div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Order Footer */}
                             <div className="oh-order-footer">
                                 <div className="oh-payment-method">

@@ -15,14 +15,18 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// Simple request logger
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, '../dist')));
 
 // 1. Connect MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(async () => {
+mongoose.connect(process.env.MONGO_URI).then(async () => {
+
     console.log('✅ Connected to MongoDB');
     // Initialize default document if empty
     const count = await Store.countDocuments();
@@ -66,6 +70,7 @@ app.get('/api/store', async (req, res) => {
         if (!store) store = await Store.create({});
         res.json(store);
     } catch (error) {
+        console.error('Store Fetch Error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -97,8 +102,7 @@ app.put('/api/store/sync', async (req, res) => {
 
         const dbKey = keyMap[key];
         if (dbKey) {
-            store[dbKey] = data;
-            await store.save();
+            await Store.findOneAndUpdate({}, { [dbKey]: data }, { upsert: true });
             res.json({ success: true });
         } else {
             res.status(400).json({ error: 'Invalid sync key' });

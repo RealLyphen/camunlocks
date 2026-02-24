@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {
     FaTimes, FaEnvelope, FaUsers, FaTag, FaLock,
     FaArrowLeft, FaArrowRight, FaCheck, FaChevronDown,
-    FaCreditCard, FaPaypal, FaBitcoin, FaWallet, FaUserPlus
+    FaCreditCard, FaPaypal, FaBitcoin, FaWallet, FaUserPlus, FaCube
 } from 'react-icons/fa';
 import { SiCashapp } from 'react-icons/si';
 import { useStore, type CartItem } from '../context/StoreContext';
@@ -25,7 +25,7 @@ interface CheckoutPopupProps {
 const SQUARE_APP_ID = 'sq0idp-XcM36OkRBy82-Qswp0CJmg';
 const SQUARE_LOCATION_ID = 'LN30A2M5GG0CD';
 
-type PaymentMethod = 'cashapp' | 'card' | 'crypto' | 'paypal' | 'balance' | 'flick';
+type PaymentMethod = 'cashapp' | 'card' | 'crypto' | 'paypal' | 'balance' | 'flick' | 'cryptomus';
 
 interface PaymentOption {
     id: PaymentMethod;
@@ -39,6 +39,7 @@ const PAYMENT_METHODS: PaymentOption[] = [
     { id: 'cashapp', Icon: SiCashapp, iconColor: '#00D632', label: 'Cash App', sub: 'Instant · No fees' },
     { id: 'card', Icon: FaCreditCard, iconColor: '#818cf8', label: 'Credit / Debit Card', sub: 'Visa · Mastercard · Amex' },
     { id: 'crypto', Icon: FaBitcoin, iconColor: '#f7931a', label: 'Crypto', sub: 'BTC · ETH · USDT' },
+    { id: 'cryptomus', Icon: FaCube, iconColor: '#f7931a', label: 'Cryptomus', sub: 'Pay with 50+ Cryptos' },
     { id: 'paypal', Icon: FaPaypal, iconColor: '#003087', label: 'PayPal', sub: 'Friends & Family' },
     { id: 'balance', Icon: FaWallet, iconColor: '#4ade80', label: 'Account Balance', sub: 'Use your wallet' },
     { id: 'flick', Icon: FaUserPlus, iconColor: '#007f31', label: 'Flik (NZ Open Banking)', sub: 'Direct bank transfer · NZ only' },
@@ -58,6 +59,7 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
     const [couponMsg, setCouponMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
     const [discount, setDiscount] = useState(0);
     const [couponApplied, setCouponApplied] = useState(false);
+    const [shippingAddress, setShippingAddress] = useState('');
 
     const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('cashapp');
     const [paymentDropdownOpen, setPaymentDropdownOpen] = useState(false);
@@ -76,7 +78,13 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
     const [cashAppVerified, setCashAppVerified] = useState(false); // auto-verification flag
 
     // Cart price calculation — items already have discounted prices baked in
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = items.reduce((sum, item) => {
+        let effectivePrice = item.price;
+        if (selectedMethod && item.gatewayPrices && item.gatewayPrices[selectedMethod]) {
+            effectivePrice = item.gatewayPrices[selectedMethod];
+        }
+        return sum + effectivePrice * item.quantity;
+    }, 0);
     // The savings from per-item coupons — for display only
     const itemSavings = items.reduce((sum, item) => {
         if (item.originalPrice) {
@@ -100,6 +108,7 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
                 setCouponCode(''); setCouponMsg(null); setDiscount(0);
                 setCouponApplied(false); setPaymentLoading(false);
                 setOrderId(''); setOrderNote(''); setCashAppVerified(false);
+                setShippingAddress('');
                 setPaymentDropdownOpen(false);
                 if (cardInstanceRef.current) { try { cardInstanceRef.current.destroy?.(); } catch { } cardInstanceRef.current = null; }
             }, 400);
@@ -184,11 +193,12 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
         const oid = `ORD-${Date.now().toString(36).toUpperCase()}`;
         setOrderId(oid); setPaidTotal(total);
         addOrder({
-            items: items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
+            items: items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity, image: i.image, isPhysical: i.isPhysical })),
             total,
             status: customStatus,
             paymentMethod: method,
-            orderNote: customNote
+            orderNote: customNote,
+            shippingAddress: items.some(i => i.isPhysical) ? shippingAddress : undefined
         });
         // Only clear the persisted cart in normal cart-checkout mode
         if (!directItems) clearCart();
@@ -215,9 +225,20 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
 
     if (!isOpen && step === 1) return null;
 
-    const canProceed = email.trim().length > 0;
+    const availableGateways = paymentSettings.gateways.filter(g => g.connected).map(g => g.id);
+    const availableMethods = PAYMENT_METHODS.filter(m => availableGateways.includes(m.id as any) || m.id === 'balance');
+
+    const requiresShipping = items.some(i => i.isPhysical);
+    const canProceed = email.trim().length > 0 && (!requiresShipping || shippingAddress.trim().length > 0);
     const isEmpty = items.length === 0;
-    const selectedMethod = PAYMENT_METHODS.find(m => m.id === selectedPayment)!;
+
+    // Automatically select a valid payment if the current one isn't available
+    if (availableMethods.length > 0 && !availableMethods.some(m => m.id === selectedPayment)) {
+        setTimeout(() => setSelectedPayment(availableMethods[0].id), 0);
+    }
+
+    // Fallback if none available
+    const selectedMethod = availableMethods.find(m => m.id === selectedPayment) || PAYMENT_METHODS[0];
 
     const content = (
         <div className={`co-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
@@ -246,6 +267,13 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
                                 <input className="co-input" type="text" placeholder="Enter referral code" value={referralCode} onChange={e => setReferralCode(e.target.value)} />
                             </div>
 
+                            {requiresShipping && (
+                                <div className="co-field">
+                                    <label className="co-label">Shipping Address <span className="required" style={{ color: '#ef4444' }}>*</span></label>
+                                    <textarea className="co-input" placeholder="Enter your full exact shipping address details..." value={shippingAddress} onChange={e => setShippingAddress(e.target.value)} rows={3} style={{ resize: 'vertical' }} />
+                                </div>
+                            )}
+
                             <div className="co-divider"><span>Payment Method</span></div>
 
                             {/* Payment Dropdown */}
@@ -271,7 +299,7 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
 
                                 {/* Dropdown Panel — rendered inline but with absolute positioning */}
                                 <div className={`co-dropdown-menu ${paymentDropdownOpen ? 'open' : ''}`}>
-                                    {PAYMENT_METHODS.map((m, i) => (
+                                    {availableMethods.map((m, i) => (
                                         <div
                                             key={m.id}
                                             className={`co-dropdown-item ${selectedPayment === m.id ? 'selected' : ''}`}
@@ -401,31 +429,33 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
                         </div>
 
                         {selectedPayment === 'cashapp' && (
-                            <div className="co-payment-body">
-                                <p className="co-payment-hint">Send exact amount via Cash App. You must include your unique Order Note so we can verify the payment automatically.</p>
-
-                                <div className="co-qr-box">
-                                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://cash.app/$${cashTag.replace('$', '')}/${total.toFixed(2)}`} alt="Cash App QR" />
-                                    <div className="co-qr-info">
-                                        Amount: <span className="co-qr-highlight">${total.toFixed(2)}</span>
-                                    </div>
-                                    <div className="co-qr-info" style={{ marginTop: 2 }}>
-                                        Cashtag: <span className="co-qr-highlight">${cashTag.replace('$', '')}</span>
-                                    </div>
+                            <div className="co-payment-body" style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'center', flexWrap: 'nowrap' }}>
+                                {/* Left side: QR Code */}
+                                <div style={{ flex: '0 0 auto', background: '#fff', padding: '16px', borderRadius: '16px' }}>
+                                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://cash.app/$${cashTag.replace('$', '')}/${total.toFixed(2)}`} alt="Cash App QR" style={{ borderRadius: '8px', display: 'block', width: 140, height: 140 }} />
                                 </div>
+                                {/* Right side: Details */}
+                                <div style={{ flex: 1, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    <p className="co-payment-hint" style={{ margin: 0, textAlign: 'left', lineHeight: 1.4 }}>Send exact amount via Cash App. Include the Order Note.</p>
 
-                                <div className="co-order-note-box">
-                                    <span style={{ fontSize: '0.8rem', color: '#a1a1aa' }}>REQUIRED ORDER NOTE:</span>
-                                    <div className="co-order-note-value">{orderNote}</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        <div style={{ fontSize: '1.2rem', color: '#fff' }}>Amount: <span style={{ color: '#00D632', fontWeight: 'bold' }}>${total.toFixed(2)}</span></div>
+                                        <div style={{ fontSize: '1.1rem', color: '#fff' }}>Cashtag: <span style={{ color: '#00D632', fontWeight: 'bold' }}>${cashTag.replace('$', '')}</span></div>
+                                    </div>
+
+                                    <div className="co-order-note-box" style={{ margin: 0, maxWidth: '100%', padding: '10px' }}>
+                                        <span style={{ fontSize: '0.75rem', color: '#a1a1aa' }}>REQUIRED ORDER NOTE:</span>
+                                        <div className="co-order-note-value" style={{ fontSize: '1.1rem', padding: '4px 0 0 0' }}>{orderNote}</div>
+                                    </div>
+
+                                    <button
+                                        className="co-proceed-btn btn-green-glow"
+                                        style={{ background: '#00D632', color: '#000', margin: 0, padding: '12px 16px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px' }}
+                                        onClick={() => handlePaymentSuccess('manual_cashapp', 'Cash App', 'pending', orderNote)}
+                                    >
+                                        <SiCashapp size={18} style={{ marginRight: 8, color: '#000' }} /> I have paid ${total.toFixed(2)}
+                                    </button>
                                 </div>
-
-                                <button
-                                    className="co-proceed-btn"
-                                    style={{ background: 'linear-gradient(135deg, #00D632, #00b829)', marginTop: 20 }}
-                                    onClick={() => handlePaymentSuccess('manual_cashapp', 'Cash App', 'pending', orderNote)}
-                                >
-                                    <SiCashapp size={16} /> I have paid ${total.toFixed(2)}
-                                </button>
                             </div>
                         )}
 
@@ -444,8 +474,8 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
                             </div>
                         )}
 
-                        {/* Account Balance / PayPal / Crypto - sim UI */}
-                        {(selectedPayment === 'crypto' || selectedPayment === 'paypal' || selectedPayment === 'balance') && (
+                        {/* Account Balance / PayPal / Crypto / Cryptomus - sim UI */}
+                        {(selectedPayment === 'crypto' || selectedPayment === 'cryptomus' || selectedPayment === 'paypal' || selectedPayment === 'balance') && (
                             <div className="co-payment-body">
                                 {selectedPayment === 'balance' ? (
                                     // Account Balance flow
@@ -489,10 +519,10 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({ isOpen, onClose, onOpenSi
                                         </>
                                     )
                                 ) : (
-                                    // Crypto / PayPal
+                                    // Crypto / PayPal / Cryptomus
                                     <>
                                         <p className="co-payment-hint">
-                                            {selectedPayment === 'crypto' && 'Send the exact amount to the wallet address below'}
+                                            {(selectedPayment === 'crypto' || selectedPayment === 'cryptomus') && 'Send the exact amount to the wallet address via gateway'}
                                             {selectedPayment === 'paypal' && 'Send payment via PayPal Friends & Family'}
                                         </p>
                                         <div className="co-sim-payment">
