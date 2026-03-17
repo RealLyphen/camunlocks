@@ -158,16 +158,30 @@ const OrderHistory: React.FC = () => {
 
                             {/* Order Items */}
                             <div className="oh-order-items">
-                                {order.items?.map((item, idx) => (
-                                    <div key={idx} className="oh-order-item">
-                                        <div className="oh-item-img">
-                                            <img src={item.image} alt={item.name} />
+                                {order.items?.map((item: any, idx) => (
+                                    <div key={idx} className="oh-order-item" style={{ flexWrap: 'wrap' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '15px' }}>
+                                            <div className="oh-item-img">
+                                                <img src={item.image} alt={item.name} />
+                                            </div>
+                                            <div className="oh-item-details" style={{ flex: 1 }}>
+                                                <span className="oh-item-name">{item.name}</span>
+                                                <span className="oh-item-meta">Qty: {item.quantity}</span>
+                                            </div>
+                                            <span className="oh-item-price">${(item.price * item.quantity).toFixed(2)}</span>
                                         </div>
-                                        <div className="oh-item-details">
-                                            <span className="oh-item-name">{item.name}</span>
-                                            <span className="oh-item-meta">Qty: {item.quantity}</span>
-                                        </div>
-                                        <span className="oh-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                                        
+                                        {/* Display License Key if delivered */}
+                                        {order.status === 'completed' && item.hasDeliveredKey && item.deliveredKey && (
+                                            <div style={{ width: '100%', marginTop: '12px', padding: '12px', background: 'rgba(74, 222, 128, 0.08)', border: '1px solid rgba(74, 222, 128, 0.2)', borderRadius: '8px' }}>
+                                                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>
+                                                    Your License Key
+                                                </div>
+                                                <div style={{ fontFamily: 'monospace', fontSize: '0.95rem', color: '#fff', background: 'rgba(0,0,0,0.3)', padding: '8px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.05)', userSelect: 'all', wordBreak: 'break-all' }}>
+                                                    {item.deliveredKey}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>

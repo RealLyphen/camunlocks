@@ -273,6 +273,10 @@ const EditProduct: React.FC = () => {
     const [images, setImages] = useState<string[]>([]);
     const [dragOver, setDragOver] = useState(false);
 
+    // — License Keys
+    const [licenseStrategy, setLicenseStrategy] = useState<'none' | 'line-by-line'>('none');
+    const [licenseKeysRaw, setLicenseKeysRaw] = useState('');
+
     // — Variants
     const [variants, setVariants] = useState<ProductVariant[]>([]);
 
@@ -325,6 +329,8 @@ const EditProduct: React.FC = () => {
                 setConfirmations(product.confirmations || []);
                 setFeatures(product.features || []);
                 setRequirements(product.requirements || []);
+                setLicenseStrategy(product.licenseStrategy || 'none');
+                setLicenseKeysRaw(product.licenseKeys ? product.licenseKeys.join('\n') : '');
                 setImages(product.images || (product.imageUrl ? [product.imageUrl] : []));
                 setVariants(product.variants || []);
                 setSelectedCategoryIds(product.categoryIds || []);
@@ -411,6 +417,8 @@ const EditProduct: React.FC = () => {
             confirmations,
             features,
             requirements,
+            licenseStrategy,
+            licenseKeys: licenseStrategy === 'line-by-line' ? licenseKeysRaw.split('\n').map(k => k.trim()).filter(Boolean) : undefined,
             metaTitle: metaTitle || name,
             metaDescription,
             categoryIds: selectedCategoryIds,
@@ -817,6 +825,50 @@ const EditProduct: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+                    </Section>
+
+                    {/* ── License Keys ── */}
+                    <Section
+                        icon={<FileText size={18} color="#818cf8" />}
+                        title="License Keys"
+                        subtitle="Automatically deliver keys line by line when purchased"
+                        delay={0.24}
+                    >
+                        <Toggle
+                            label="Enable Line-by-Line Delivery"
+                            sublabel="Deliver one key per item purchased"
+                            icon={<Check size={16} />}
+                            checked={licenseStrategy === 'line-by-line'}
+                            onChange={v => setLicenseStrategy(v ? 'line-by-line' : 'none')}
+                        />
+                        <AnimatePresence>
+                            {licenseStrategy === 'line-by-line' && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    style={{ overflow: 'hidden' }}
+                                >
+                                    <div style={{ paddingTop: 16 }}>
+                                        <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: 8 }}>
+                                            Enter License Keys (One per line)
+                                        </label>
+                                        <textarea
+                                            className="admin-input"
+                                            rows={8}
+                                            placeholder="XXXX-YYYY-ZZZZ&#10;AAAA-BBBB-CCCC"
+                                            style={{ resize: 'vertical' }}
+                                            value={licenseKeysRaw}
+                                            onChange={e => setLicenseKeysRaw(e.target.value)}
+                                        />
+                                        <p style={{ fontSize: '0.75rem', color: '#71717a', marginTop: 8 }}>
+                                            {licenseKeysRaw.split('\n').filter(k => k.trim()).length} keys available
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </Section>
 
                     {/* ── 5. Variants ── */}

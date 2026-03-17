@@ -46,7 +46,6 @@ interface StoreSettings {
     apps?: {
         crispWebsiteId?: string;
         telegramUsername?: string;
-        telegramUsername?: string;
         discordUrl?: string;
         appStoreConnectApiKey?: string;
         appStoreConnectIssuerId?: string;
@@ -70,6 +69,7 @@ export interface CartItem {
     appliedCoupon?: string; // coupon code already applied to this item
     isPhysical?: boolean;
     gatewayPrices?: Record<string, number>;
+    deliveredKey?: string; // the delivered line-by-line key if applicable
 }
 
 export interface ProductVariant {
@@ -101,6 +101,8 @@ export interface Product {
     features?: string[]; // Dynamic features array
     requirements?: string[]; // Dynamic requirements array
     confirmations?: string[]; // Array of strings, each representing a mandatory checkbox
+    licenseStrategy?: 'none' | 'line-by-line'; // NEW Key delivery logic
+    licenseKeys?: string[]; // NEW Array of unassigned keys for line-by-line
     metaTitle?: string;
     metaDescription?: string;
     categoryIds: string[];
@@ -766,13 +768,33 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     };
 
     const markOrderPaid = (orderId: string) => {
+        let keysToSave: { productId: string; newKeys: string[] }[] = [];
+
         setUsers(prevUsers => {
             const updated = prevUsers.map(user => {
-                const hasOrder = user.orders.some(o => o.id === orderId);
+                const hasOrder = user.orders.some(o => o.id === orderId && o.status !== 'completed');
                 if (!hasOrder) return user;
                 return {
                     ...user,
-                    orders: user.orders.map(o => o.id === orderId ? { ...o, status: 'completed' as const } : o)
+                    orders: user.orders.map(o => {
+                        if (o.id !== orderId) return o;
+                        // Assign keys to items that require them
+                        const updatedItems = o.items.map(item => {
+                            // Find corresponding product
+                            const productBase = products.find(p => item.name.startsWith(p.name));
+                            if (productBase?.licenseStrategy === 'line-by-line' && productBase.licenseKeys && productBase.licenseKeys.length > 0) {
+                                // Assign the first available key
+                                const key = productBase.licenseKeys[0];
+                                // Prepare remaining keys to save to products state
+                                const remainingKeys = productBase.licenseKeys.slice(1);
+                                keysToSave.push({ productId: productBase.id, newKeys: remainingKeys });
+
+                                return { ...item, deliveredKey: key, hasDeliveredKey: true }; // Store it on the item
+                            }
+                            return item;
+                        });
+                        return { ...o, status: 'completed' as const, items: updatedItems };
+                    })
                 };
             });
             // Also sync current user if affected
@@ -781,6 +803,17 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             }
             return updated;
         });
+
+        // Batch update product license keys if we consumed any
+        if (keysToSave.length > 0) {
+            setProducts(prevProducts => prevProducts.map(p => {
+                const saveJob = keysToSave.find(k => k.productId === p.id);
+                if (saveJob) {
+                    return { ...p, licenseKeys: saveJob.newKeys };
+                }
+                return p;
+            }));
+        }
     };
 
     // Keep markOrderPaidRef always pointing to the latest markOrderPaid so the

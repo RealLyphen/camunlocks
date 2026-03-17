@@ -117,7 +117,7 @@ const PopularProducts: React.FC<PopularProps> = ({ config }) => {
                         const isPopular = product.id === mostPopularId;
                         return (
                             <Link
-                                to={`/product/${product.id}`}
+                                to={`/product/${product.slug || product.id}`}
                                 key={product.id}
                                 className="product-card"
                                 style={{ animationDelay: `${index * 0.1}s`, textDecoration: 'none', color: 'inherit', position: 'relative' }}
@@ -134,7 +134,7 @@ const PopularProducts: React.FC<PopularProps> = ({ config }) => {
                                     </div>
                                 )}
 
-                                <img src={product.imageUrl || '/banners/apex.png'} alt={product.name} className="product-banner" style={{ objectFit: 'cover' }} />
+                                <img src={product.imageUrl || 'https://placehold.co/800x450/0a0a0c/4f68f8?text=No+Product+Image'} alt={product.name} className="product-banner" style={{ objectFit: 'cover' }} />
                                 <div style={{
                                     position: 'absolute',
                                     bottom: 0,

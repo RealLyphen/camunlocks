@@ -108,7 +108,7 @@ const ProductPage: React.FC = () => {
         ? product.images
         : product.imageUrl
             ? [product.imageUrl]
-            : ['https://placehold.co/800x450/0a0a0c/4f68f8?text=No+Image'];
+            : ['https://placehold.co/800x450/0a0a0c/4f68f8?text=No+Product+Image'];
 
     // Build variants — use product variants if available, otherwise use price
     const variants = product.variants && product.variants.length > 0
@@ -118,8 +118,9 @@ const ProductPage: React.FC = () => {
             sub: '',
             price: v.price,
             original: v.compareAtPrice || null,
+            gatewayPrices: v.gatewayPrices,
         }))
-        : [{ id: 0, name: product.name, sub: '', price: product.price, original: product.compareAtPrice || null }];
+        : [{ id: 0, name: product.name, sub: '', price: product.price, original: product.compareAtPrice || null, gatewayPrices: product.gatewayPrices }];
 
     // Get category names for this product
     const productCategories = categories.filter(c => product.categoryIds.includes(c.id));
