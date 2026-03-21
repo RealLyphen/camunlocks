@@ -426,19 +426,39 @@
     }
 
     .hero-character {
-        position: relative;
-        right: 0;
-        width: 85%;
-        max-width: 400px;
-        margin-top: 2rem;
-    }
-
-    .notice-bar-container {
-        padding: 0 1rem 2rem 1rem;
+        display: none;
     }
 
     .feature-boxes-container {
         padding: 0 1rem 2rem 1rem;
+    }
+
+    .notice-bar {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .notice-left {
+        gap: 0.8rem;
+    }
+
+    .notice-logo {
+        width: 28px;
+        height: 28px;
+    }
+
+    .notice-text h3 {
+        font-size: 0.95rem;
+    }
+
+    .notice-text p {
+        font-size: 0.8rem;
+    }
+
+    .btn-discord {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        width: auto;
     }
 }
 
