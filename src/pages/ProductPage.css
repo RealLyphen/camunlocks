@@ -723,13 +723,18 @@
 
     .product-banner-inner {
         border-radius: 0;
-        background: transparent;
-        aspect-ratio: 4 / 3;
+        background: #0a0a0c;
+        aspect-ratio: auto;
+        width: 100%;
     }
 
-    /* Center the image properly */
+    /* Fill the container fully and center the image */
     .product-main-image {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
         object-position: center center;
+        display: block;
     }
 
     /* Show thumbnail gallery as a horizontal scrollable row */
@@ -752,19 +757,31 @@
         border-radius: 8px;
     }
 
-    /* Show small arrows on mobile */
+    /* Plain arrows inside the image — no circles, no background */
     .slider-arrow {
         display: flex;
         opacity: 1;
-        width: 30px;
-        height: 30px;
-        font-size: 1.1rem;
-        background: rgba(0, 0, 0, 0.45);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        width: auto;
+        height: auto;
+        background: none;
+        border: none;
+        border-radius: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        padding: 10px;
     }
 
-    .slider-arrow.left { left: 10px; }
-    .slider-arrow.right { right: 10px; }
+    .slider-arrow:hover {
+        background: none;
+        border: none;
+        color: #ffffff;
+    }
+
+    .slider-arrow.left { left: 5px; }
+    .slider-arrow.right { right: 5px; }
 
     /* Pagination dots below the image */
     .slider-pagination {
