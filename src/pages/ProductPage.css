@@ -696,15 +696,15 @@
 }
 
 @media (max-width: 640px) {
-    /* 1. Remove padding from the main wrapper to allow edge-to-edge blocks */
+    /* Remove wrapper padding so image can go edge-to-edge */
     .product-content-wrapper {
-        padding: 0; 
+        padding: 0;
     }
 
-    /* 2. Apply padding to the inner columns instead so text doesn't touch screen edges */
+    /* Apply padding to columns for text content */
     .product-left-col {
         padding: 0 15px;
-        padding-top: 0px; /* Move image up towards the navbar */
+        padding-top: 0;
         gap: 20px;
     }
 
@@ -712,7 +712,7 @@
         padding: 0 15px;
     }
 
-    /* 3. Make banner span the full width exactly (cancel out left-col padding) */
+    /* Edge-to-edge banner */
     .product-banner-wrapper {
         margin: 0 -15px 35px -15px;
         padding: 0;
@@ -721,27 +721,55 @@
         box-shadow: none;
     }
 
-    /* 4. No border radius so corners aren't hidden/cut */
     .product-banner-inner {
         border-radius: 0;
         background: transparent;
-        aspect-ratio: 4 / 3; /* Keep it well-proportioned, neither huge nor tiny */
+        aspect-ratio: 4 / 3;
     }
 
-    /* Hide desktop thumbnail gallery on mobile */
+    /* Center the image properly */
+    .product-main-image {
+        object-position: center center;
+    }
+
+    /* Show thumbnail gallery as a horizontal scrollable row */
     .product-gallery {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        scrollbar-width: none;
+    }
+
+    .product-gallery::-webkit-scrollbar {
         display: none;
     }
 
-    /* Completely hide arrows on mobile to match the requested image exactly */
+    .gallery-thumb {
+        width: 60px;
+        height: 45px;
+        flex-shrink: 0;
+        border-radius: 8px;
+    }
+
+    /* Show small arrows on mobile */
     .slider-arrow {
-        display: none;
+        display: flex;
+        opacity: 1;
+        width: 30px;
+        height: 30px;
+        font-size: 1.1rem;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* Position dots cleanly below the image */
+    .slider-arrow.left { left: 10px; }
+    .slider-arrow.right { right: 10px; }
+
+    /* Pagination dots below the image */
     .slider-pagination {
         opacity: 1;
-        bottom: -28px;
+        bottom: -25px;
         background: transparent;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
@@ -750,9 +778,9 @@
     }
 
     .page-dot {
-        background: rgba(255, 255, 255, 0.2);
-        width: 6px;
-        height: 6px;
+        background: rgba(255, 255, 255, 0.25);
+        width: 7px;
+        height: 7px;
         box-shadow: none;
     }
 
