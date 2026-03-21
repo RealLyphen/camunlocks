@@ -700,9 +700,23 @@
         padding: 0 20px;
     }
 
+    .product-left-col {
+        padding-top: 15px;
+        gap: 30px;
+    }
+
+    .product-banner-wrapper {
+        margin: 0 -20px 25px -20px;
+        padding: 0;
+        border-radius: 0;
+        background: none;
+        box-shadow: none;
+    }
+
     .product-banner-inner {
-        border-radius: 12px;
-        aspect-ratio: 4 / 3; /* More vertical-friendly aspect ratio on mobile */
+        border-radius: 0;
+        aspect-ratio: 1 / 1;
+        background: #000;
     }
 
     /* Hide desktop thumbnail gallery on mobile to save space */
@@ -710,17 +724,31 @@
         display: none;
     }
 
-    /* Ensure slider controls are always visible on mobile since there's no hover */
-    .slider-arrow, .slider-pagination {
-        opacity: 1;
+    /* Hide arrows on mobile to match the clean design */
+    .slider-arrow {
+        display: none;
     }
 
-    .slider-arrow {
-        width: 32px;
-        height: 32px;
-        font-size: 1.2rem;
+    /* Position dots below the image without the translucent box */
+    .slider-pagination {
+        opacity: 1;
+        bottom: -25px;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        padding: 0;
+        gap: 8px;
     }
-    
-    .slider-arrow.left { left: 8px; }
-    .slider-arrow.right { right: 8px; }
+
+    .page-dot {
+        background: rgba(255, 255, 255, 0.2);
+        width: 6px;
+        height: 6px;
+        box-shadow: none;
+    }
+
+    .page-dot.active {
+        background: #ffffff;
+        transform: scale(1.3);
+    }
 }
