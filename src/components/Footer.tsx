@@ -40,23 +40,30 @@ const Footer: React.FC = () => {
                 <div className="footer-top">
                     {/* Brand Column */}
                     <div className="footer-col brand-col">
-                        <div className="footer-logo">
-                            <img src={settings.logoUrl || "/logo.png"} alt="CamUnlocks" />
-                            <span>CamUnlocks</span>
+                        <div className="brand-info">
+                            <div className="footer-logo">
+                                <img src={settings.logoUrl || "/logo.png"} alt="CamUnlocks" />
+                                <span>CamUnlocks</span>
+                            </div>
+                            <p className="footer-desc desktop-desc">
+                                CamUnlocks provides top-tier modifications for AAA titles, with thousands of successful orders.
+                                Backed by 24/7 support and instant delivery, we ensure a seamless experience.
+                                Take your gaming experience to the next level.
+                            </p>
+                            <p className="footer-desc mobile-desc">
+                                Top-tier modifications for AAA titles with 24/7 support and instant delivery.
+                            </p>
                         </div>
-                        <p className="footer-desc">
-                            CamUnlocks provides top-tier modifications for AAA titles, with thousands of successful orders.
-                            Backed by 24/7 support and instant delivery, we ensure a seamless experience.
-                            Take your gaming experience to the next level.
-                        </p>
-                        <a href="/#products" className="footer-cta-btn">
-                            UNDETECTED CHEATS
-                        </a>
-                        <a href="https://www.trustpilot.com/review/camunlocks.com" target="_blank" rel="noopener noreferrer" className="trustpilot-widget">
-                            <span>Review us on</span>
-                            <span className="trustpilot-star">★</span>
-                            <strong>Trustpilot</strong>
-                        </a>
+                        <div className="brand-buttons">
+                            <a href="/#products" className="footer-cta-btn">
+                                UNDETECTED CHEATS
+                            </a>
+                            <a href="https://www.trustpilot.com/review/camunlocks.com" target="_blank" rel="noopener noreferrer" className="trustpilot-widget">
+                                <span>Review us on</span>
+                                <span className="trustpilot-star">★</span>
+                                <strong>Trustpilot</strong>
+                            </a>
+                        </div>
                     </div>
 
                     {/* Products Column 1 */}
@@ -144,7 +151,7 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="footer-legal">
                         <div className="copyright">
-                            <p>&copy; {new Date().getFullYear()} Camunlocks. All rights reserved. <span className="powered-by">Powered by Camunlocks</span></p>
+                            <p>&copy; {new Date().getFullYear()} Camunlocks. All rights reserved. <a href="https://t.me/Lyphen" target="_blank" rel="noopener noreferrer" className="powered-by">Designed by Lyphen</a></p>
                         </div>
                         <div className="social-links">
                             {settings.socials?.discord && (

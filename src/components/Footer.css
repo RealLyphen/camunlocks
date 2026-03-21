@@ -53,6 +53,21 @@
     margin-bottom: 10px;
 }
 
+.desktop-desc {
+    display: block;
+}
+
+.mobile-desc {
+    display: none;
+}
+
+.brand-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
 .footer-cta-btn {
     display: flex;
     align-items: center;
@@ -267,30 +282,92 @@
 
 @media (max-width: 640px) {
     .footer-container {
-        padding: 0 20px;
+        padding: 0 15px;
     }
 
     .footer-top {
-        grid-template-columns: 1fr;
-        gap: 35px;
-        text-align: center;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        text-align: left;
     }
 
     .brand-col {
-        grid-column: span 1;
-        align-items: center;
+        grid-column: span 2;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .brand-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand-buttons {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    .desktop-desc {
+        display: none;
+    }
+
+    .mobile-desc {
+        display: block;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        margin-top: 5px;
+        color: #a1a1aa;
     }
 
     .footer-logo {
-        justify-content: center;
+        font-size: 1.1rem;
+        justify-content: flex-start;
+    }
+
+    .footer-logo img {
+        height: 24px;
+    }
+
+    .footer-cta-btn {
+        font-size: 0.75rem;
+        padding: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .trustpilot-widget {
+        padding: 8px;
+        font-size: 0.75rem;
+        width: 100%;
+    }
+
+    .trustpilot-star {
+        font-size: 1rem;
     }
 
     .footer-links {
-        align-items: center;
+        align-items: flex-start;
     }
 
     .footer-heading {
-        margin-bottom: 16px;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+    }
+
+    .footer-links li a {
+        font-size: 0.75rem;
+    }
+    
+    .footer-contact p, .contact-email {
+        font-size: 0.75rem;
     }
 
     .mobile-hidden {
@@ -305,16 +382,39 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        gap: 25px;
+        gap: 20px;
     }
 
     .payment-methods {
-        justify-content: center;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+        scrollbar-width: none;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .payment-methods::-webkit-scrollbar {
+        display: none;
+    }
+
+    .payment-group {
+        gap: 10px;
+    }
+
+    .payment-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .payment-divider {
+        flex-shrink: 0;
     }
 
     .social-links {
         justify-content: center;
         width: 100%;
-        margin-top: 10px;
+        margin-top: 5px;
     }
 }
