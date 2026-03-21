@@ -69,6 +69,7 @@ const Navbar: React.FC = () => {
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const menuRefs = useRef<{ [key: string]: HTMLAnchorElement | null }>({});
 
     const cartItemCount = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
@@ -80,6 +81,21 @@ const Navbar: React.FC = () => {
             setActiveItem('home');
         }
     }, [location]);
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location]);
+
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [isMobileMenuOpen]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -106,12 +122,19 @@ const Navbar: React.FC = () => {
 
     const userInitial = currentUser ? currentUser.email.charAt(0).toUpperCase() : '';
 
+    const handleMobileLinkClick = (itemId: string) => {
+        setActiveItem(itemId);
+        setIsMobileMenuOpen(false);
+    };
+
     return (
         <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
             <div className="navbar-container">
                 <Link to="/" className="navbar-logo">
                     <img src={settings.logoUrl || "/logo.png"} alt="Logo" />
                 </Link>
+
+                {/* Desktop menu */}
                 <ul className="navbar-menu">
                     {menuItems.map((item) => (
                         <li key={item.id} className={activeItem === item.id ? 'active' : ''}>
@@ -133,9 +156,10 @@ const Navbar: React.FC = () => {
                         }}
                     />
                 </ul>
+
+                {/* Desktop auth */}
                 <div className="navbar-auth">
                     {currentUser ? (
-                        /* ─── Logged in: show profile avatar ─── */
                         <div className="profile-wrapper">
                             <button
                                 className="profile-avatar-btn"
@@ -150,7 +174,6 @@ const Navbar: React.FC = () => {
                             />
                         </div>
                     ) : (
-                        /* ─── Not logged in: show Sign In / Sign Up ─── */
                         <>
                             <span className="auth-text">Existing user?
                                 <a href="#signin" onClick={(e) => {
@@ -166,7 +189,69 @@ const Navbar: React.FC = () => {
                         {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
                     </button>
                 </div>
+
+                {/* Mobile: cart + hamburger (always visible on mobile) */}
+                <div className="mobile-nav-right">
+                    <button className="navbar-cart-btn" onClick={() => setIsCartOpen(true)}>
+                        <IoCartOutline />
+                        {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
+                    </button>
+                    <button
+                        className={`hamburger-btn ${isMobileMenuOpen ? 'open' : ''}`}
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        <span className="hamburger-bar"></span>
+                        <span className="hamburger-bar"></span>
+                        <span className="hamburger-bar"></span>
+                    </button>
+                </div>
             </div>
+
+            {/* Mobile menu overlay */}
+            <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`}>
+                <ul className="mobile-menu-list">
+                    {menuItems.map((item) => (
+                        <li key={item.id} className={activeItem === item.id ? 'active' : ''}>
+                            <Link
+                                to={item.path}
+                                onClick={() => handleMobileLinkClick(item.id)}
+                            >
+                                {item.icon}
+                                <span>{item.label}</span>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+                <div className="mobile-auth-section">
+                    {currentUser ? (
+                        <div className="profile-wrapper">
+                            <button
+                                className="profile-avatar-btn"
+                                onClick={() => {
+                                    setIsProfileOpen(!isProfileOpen);
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                title={currentUser.email}
+                            >
+                                {userInitial}
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <button className="auth-signup-btn" onClick={() => { setIsSignUpOpen(true); setIsMobileMenuOpen(false); }}>Sign Up</button>
+                            <span className="auth-text">Existing user?
+                                <a href="#signin" onClick={(e) => {
+                                    e.preventDefault();
+                                    setIsSignInOpen(true);
+                                    setIsMobileMenuOpen(false);
+                                }}>Sign In</a>
+                            </span>
+                        </>
+                    )}
+                </div>
+            </div>
+
             <SignInPopup
                 isOpen={isSignInOpen}
                 onClose={() => setIsSignInOpen(false)}
