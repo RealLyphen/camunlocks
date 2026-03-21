@@ -173,6 +173,32 @@ const ProductPage: React.FC = () => {
                         <div className="product-banner-wrapper">
                             <div className="product-banner-inner">
                                 <img src={allImages[selectedImage]} alt={product.name} className="product-main-image" />
+                                
+                                {allImages.length > 1 && (
+                                    <>
+                                        <button 
+                                            className="slider-arrow left" 
+                                            onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => prev === 0 ? allImages.length - 1 : prev - 1); }}
+                                        >
+                                            ‹
+                                        </button>
+                                        <button 
+                                            className="slider-arrow right" 
+                                            onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => prev === allImages.length - 1 ? 0 : prev + 1); }}
+                                        >
+                                            ›
+                                        </button>
+                                        <div className="slider-pagination">
+                                            {allImages.map((_, idx) => (
+                                                <div 
+                                                    key={idx} 
+                                                    className={`page-dot ${selectedImage === idx ? 'active' : ''}`} 
+                                                    onClick={(e) => { e.stopPropagation(); setSelectedImage(idx); }} 
+                                                />
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 

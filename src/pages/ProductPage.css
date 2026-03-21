@@ -57,6 +57,81 @@
     transform: scale(1.03);
 }
 
+/* Slider Controls */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(10, 10, 12, 0.6);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    z-index: 10;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+}
+
+.product-banner-inner:hover .slider-arrow {
+    opacity: 1;
+}
+
+.slider-arrow:hover {
+    background: rgba(79, 104, 248, 0.8);
+    border-color: rgba(79, 104, 248, 1);
+}
+
+.slider-arrow.left { left: 15px; }
+.slider-arrow.right { right: 15px; }
+
+.slider-pagination {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+    background: rgba(10, 10, 12, 0.4);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.product-banner-inner:hover .slider-pagination {
+    opacity: 1;
+}
+
+.page-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-dot:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.page-dot.active {
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
 /* Gallery Thumbnails */
 .product-gallery {
     display: flex;
@@ -627,5 +702,25 @@
 
     .product-banner-inner {
         border-radius: 12px;
+        aspect-ratio: 4 / 3; /* More vertical-friendly aspect ratio on mobile */
     }
+
+    /* Hide desktop thumbnail gallery on mobile to save space */
+    .product-gallery {
+        display: none;
+    }
+
+    /* Ensure slider controls are always visible on mobile since there's no hover */
+    .slider-arrow, .slider-pagination {
+        opacity: 1;
+    }
+
+    .slider-arrow {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+    }
+    
+    .slider-arrow.left { left: 8px; }
+    .slider-arrow.right { right: 8px; }
 }
