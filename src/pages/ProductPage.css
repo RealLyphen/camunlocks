@@ -697,42 +697,56 @@
 
 @media (max-width: 640px) {
     .product-content-wrapper {
-        padding: 0 20px;
+        padding: 0 15px;
     }
 
     .product-left-col {
-        padding-top: 15px;
-        gap: 30px;
+        padding-top: 0px; /* Move image up towards the navbar */
+        gap: 20px;
     }
 
     .product-banner-wrapper {
-        margin: 0 -20px 25px -20px;
-        padding: 0;
-        border-radius: 0;
-        background: none;
-        box-shadow: none;
+        /* Boxed layout (no negative margins) */
+        margin: 0 0 30px 0;
+        padding: 3px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(79, 104, 248, 0.3), rgba(0, 0, 0, 0), rgba(79, 104, 248, 0.1));
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     .product-banner-inner {
-        border-radius: 0;
-        aspect-ratio: 1 / 1;
-        background: #000;
+        border-radius: 14px;
+        aspect-ratio: 4 / 3; /* Balanced mobile size */
+        background: #0a0a0c;
     }
 
-    /* Hide desktop thumbnail gallery on mobile to save space */
+    /* Hide desktop thumbnail gallery on mobile */
     .product-gallery {
         display: none;
     }
 
-    /* Hide arrows on mobile to match the clean design */
+    /* Small, elegant arrows for mobile */
     .slider-arrow {
-        display: none;
+        display: flex; /* Make visible again */
+        width: 28px;
+        height: 28px;
+        font-size: 1.1rem;
+        background: rgba(10, 10, 12, 0.5);
+        opacity: 1; /* Always show on mobile since there's no hover */
     }
 
-    /* Position dots below the image without the translucent box */
+    .slider-arrow:hover {
+        background: rgba(10, 10, 12, 0.5); /* Disable dramatic hover effect on mobile */
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .slider-arrow.left { left: 8px; }
+    .slider-arrow.right { right: 8px; }
+
+    /* Position dots below the boxed image */
     .slider-pagination {
         opacity: 1;
-        bottom: -25px;
+        bottom: -28px;
         background: transparent;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
