@@ -731,7 +731,7 @@
 
 @media (max-width: 640px) {
     .product-page-container {
-        padding-top: 0;
+        padding-top: 2rem;
         padding-bottom: 30px;
     }
 
@@ -780,19 +780,15 @@
     .product-banner-inner {
         border-radius: 12px;
         background: #0a0a0c;
-        aspect-ratio: auto;
+        aspect-ratio: 1 / 1;
         width: 100%;
-        max-height: 220px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        overflow: hidden;
     }
 
     .product-main-image {
         width: 100%;
-        height: auto;
-        max-height: 220px;
-        object-fit: contain;
+        height: 100%;
+        object-fit: cover;
         object-position: center center;
         display: block;
     }
@@ -812,9 +808,14 @@
 
     .gallery-thumb {
         width: 55px;
-        height: 40px;
+        height: 55px;
         flex-shrink: 0;
         border-radius: 8px;
+        aspect-ratio: 1 / 1;
+    }
+
+    .gallery-thumb img {
+        object-fit: cover;
     }
 
     /* Slider arrows */
