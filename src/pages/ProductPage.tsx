@@ -1,5 +1,5 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaShoppingCart, FaShieldAlt, FaBolt, FaCheck, FaHeadset, FaLock, FaStar, FaTag } from 'react-icons/fa';
 import { useStore, type CartItem } from '../context/StoreContext';
 // CartItem type is provided via the StoreContext hook
@@ -170,6 +170,19 @@ const ProductPage: React.FC = () => {
                 <div className="product-content-wrapper">
                     {/* Left Column */}
                     <div className="product-left-col">
+                        {/* Breadcrumbs */}
+                        <nav className="product-breadcrumbs">
+                            <Link to="/">Home</Link>
+                            <span className="breadcrumb-sep">/</span>
+                            {productCategories.length > 0 && (
+                                <>
+                                    <span>{productCategories[0].name}</span>
+                                    <span className="breadcrumb-sep">/</span>
+                                </>
+                            )}
+                            <span className="breadcrumb-current">{product.name}</span>
+                        </nav>
+
                         <div className="product-banner-wrapper">
                             <div className="product-banner-inner">
                                 <img src={allImages[selectedImage]} alt={product.name} className="product-main-image" />
