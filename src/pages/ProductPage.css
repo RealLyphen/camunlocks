@@ -743,11 +743,9 @@
         gap: 16px;
     }
 
-    /* Right column (title + purchase) comes FIRST on mobile */
+    /* Right column (title + purchase) comes AFTER image on mobile */
     .product-right-col {
-        order: -1;
         padding: 0 15px;
-        padding-top: 10px;
     }
 
     /* Left column (image + tabs) comes after */
