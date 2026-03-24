@@ -731,30 +731,37 @@
 
 @media (max-width: 640px) {
     .product-page-container {
-        padding-top: 70px;
+        padding-top: 0;
+        padding-bottom: 30px;
     }
 
-    /* Remove wrapper padding so image can go edge-to-edge */
+    /* Single column flex layout for reordering */
     .product-content-wrapper {
         padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
     }
 
-    /* Apply padding to columns for text content */
+    /* Right column (title + purchase) comes FIRST on mobile */
+    .product-right-col {
+        order: -1;
+        padding: 0 15px;
+        padding-top: 10px;
+    }
+
+    /* Left column (image + tabs) comes after */
     .product-left-col {
         padding: 0 15px;
         padding-top: 0;
         gap: 15px;
     }
 
-    .product-right-col {
-        padding: 0 15px;
-    }
-
     /* Breadcrumbs mobile */
     .product-breadcrumbs {
         font-size: 0.75rem;
         gap: 5px;
-        padding-top: 8px;
+        padding-top: 0;
         margin-bottom: -5px;
     }
 
