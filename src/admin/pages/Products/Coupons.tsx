@@ -55,7 +55,8 @@ const Coupons: React.FC = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}
+                className="admin-grid-3"
+                style={{ marginBottom: 24 }}
             >
                 {[
                     { label: 'Total Coupons', value: coupons.length, color: '#818cf8' },
@@ -88,7 +89,7 @@ const Coupons: React.FC = () => {
                 style={{ padding: '16px 24px', marginBottom: 24 }}
             >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', width: 380 }}>
+                    <div className="admin-search-bar">
                         <Search
                             size={18}
                             style={{
@@ -120,7 +121,9 @@ const Coupons: React.FC = () => {
                 transition={{ duration: 0.4, delay: 0.2 }}
                 className="table-card"
                 style={{ padding: 0, overflow: 'hidden' }}
+
             >
+              <div className="admin-table-wrap">
                 <table className="data-table">
                     <thead>
                         <tr>
@@ -257,15 +260,11 @@ const Coupons: React.FC = () => {
                         )}
                     </tbody>
                 </table>
+              </div>
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '16px 24px',
-                        borderTop: '1px solid rgba(255,255,255,0.05)',
-                        background: 'rgba(255,255,255,0.01)',
-                    }}>
+                    <div className="admin-pagination">
                         <div style={{ fontSize: '0.875rem', color: '#71717a' }}>
                             Showing {((page - 1) * itemsPerPage) + 1} to {Math.min(page * itemsPerPage, filteredCoupons.length)} of {filteredCoupons.length} results
                         </div>

@@ -129,11 +129,11 @@ const StatusManager: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '30px', maxWidth: 1400, margin: '0 auto' }}>
+        <div style={{ padding: '16px', maxWidth: 1400, margin: '0 auto' }}>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 30 }}>
+            <div className="admin-status-header">
                 <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 700, color: '#fff', margin: 0 }}>Game Status</h1>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', margin: 0 }}>Game Status</h1>
                     <p style={{ color: '#a1a1aa', margin: '6px 0 0', fontSize: '0.95rem' }}>Manage game services and their detection status</p>
                 </div>
                 <motion.button
@@ -316,13 +316,7 @@ const StatusManager: React.FC = () => {
                         >
                             {/* Game Header */}
                             <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    padding: '16px 20px',
-                                    cursor: 'pointer',
-                                    gap: 12,
-                                }}
+                                className="admin-game-header"
                                 onClick={() => !isEditingName && toggleExpand(group.id)}
                             >
                                 <div style={{ color: '#71717a', transition: 'transform 0.2s', transform: isExpanded ? 'rotate(0deg)' : 'rotate(0deg)' }}>
@@ -359,7 +353,7 @@ const StatusManager: React.FC = () => {
                                 )}
 
                                 {/* Status summary pills */}
-                                <div style={{ display: 'flex', gap: 6, marginRight: 8 }}>
+                                <div className="admin-status-pills">
                                     {Object.entries(
                                         group.products.reduce((acc, p) => {
                                             acc[p.status] = (acc[p.status] || 0) + 1;
@@ -413,10 +407,7 @@ const StatusManager: React.FC = () => {
                                     >
                                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '0 20px 16px' }}>
                                             {/* Service Header Row */}
-                                            <div style={{
-                                                display: 'grid',
-                                                gridTemplateColumns: '1fr 160px 150px 80px',
-                                                gap: 12,
+                                            <div className="admin-service-grid" style={{
                                                 padding: '12px 0 8px',
                                                 borderBottom: '1px solid rgba(255,255,255,0.04)',
                                             }}>
@@ -433,11 +424,8 @@ const StatusManager: React.FC = () => {
                                                 return (
                                                     <div
                                                         key={sIdx}
+                                                        className="admin-service-grid"
                                                         style={{
-                                                            display: 'grid',
-                                                            gridTemplateColumns: '1fr 160px 150px 80px',
-                                                            gap: 12,
-                                                            alignItems: 'center',
                                                             padding: '10px 0',
                                                             borderBottom: '1px solid rgba(255,255,255,0.03)',
                                                         }}
@@ -559,11 +547,8 @@ const StatusManager: React.FC = () => {
                                                 <motion.div
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
+                                                    className="admin-service-grid"
                                                     style={{
-                                                        display: 'grid',
-                                                        gridTemplateColumns: '1fr 160px 150px 80px',
-                                                        gap: 12,
-                                                        alignItems: 'center',
                                                         padding: '12px 0',
                                                         borderTop: '1px solid rgba(79, 104, 248, 0.1)',
                                                     }}

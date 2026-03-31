@@ -336,7 +336,7 @@ const VisitorAnalytics: React.FC = () => {
         <div style={{ padding: '0 0 48px', fontFamily: 'Inter,sans-serif', color: '#fff' }}>
 
             {/* ── HEADER ── */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
+            <div className="admin-page-header">
                 <div>
                     <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, background: 'linear-gradient(135deg,#fff,#a1a1aa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         Visitor Analytics
@@ -346,7 +346,7 @@ const VisitorAnalytics: React.FC = () => {
                     </p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div className="admin-controls">
                     {/* Live clock */}
                     <div style={{ background: 'rgba(15,15,20,0.7)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                         <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981', animation: 'pulseGreen 2s infinite' }} />
@@ -419,8 +419,7 @@ const VisitorAnalytics: React.FC = () => {
             </div>
 
             {/* ── CUSTOM DATE RANGE BAR (always visible) ── */}
-            <div style={{
-                display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, flexWrap: 'wrap',
+            <div className="admin-date-bar" style={{
                 background: 'rgba(15,15,20,0.55)', border: '1px solid rgba(255,255,255,0.07)',
                 borderRadius: 14, padding: '12px 16px',
             }}>
@@ -461,7 +460,7 @@ const VisitorAnalytics: React.FC = () => {
             </div>
 
             {/* ── STAT CARDS ── */}
-            <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
+            <div className="admin-stat-row">
                 <StatCard label="Page Views" value={pageViews.toLocaleString()} sub="Total page loads" color="#6366f1"
                     icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>} />
                 <StatCard label="Visits" value={visits.toLocaleString()} sub="Total sessions" color="#8b5cf6"
@@ -512,7 +511,7 @@ const VisitorAnalytics: React.FC = () => {
             {/* ── OVERVIEW TAB ── */}
             {activeTab === 'overview' && (
                 <>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+                    <div className="admin-grid-2" style={{ marginBottom: 14 }}>
                         <GlassCard title="📄 Top Pages">
                             {topPages.length === 0 ? <Empty /> : topPages.map((p, i) => <BarRow key={p.label} label={p.label} count={p.count} pct={p.pct} color={P[i % P.length]} />)}
                         </GlassCard>
@@ -520,7 +519,7 @@ const VisitorAnalytics: React.FC = () => {
                             {topBrowsers.length === 0 ? <Empty /> : topBrowsers.map((b, i) => <BarRow key={b.label} label={b.label} count={b.count} pct={b.pct} color={P[i % P.length]} icon={BROWSER_ICONS[b.label]} />)}
                         </GlassCard>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                    <div className="admin-grid-2">
                         <GlassCard title="💻 Visitor OS">
                             {topOS.length === 0 ? <Empty /> : topOS.map((o, i) => <BarRow key={o.label} label={o.label} count={o.count} pct={o.pct} color={P[i % P.length]} icon={OS_ICONS[o.label]} />)}
                         </GlassCard>
@@ -563,7 +562,7 @@ const VisitorAnalytics: React.FC = () => {
 
             {/* ── REFERRERS TAB ── */}
             {activeTab === 'referrers' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div className="admin-grid-2">
                     <GlassCard title="🔗 Top Referrers">
                         {topReferrers.length === 0 ? <Empty /> : topReferrers.map((r, i) => (
                             <BarRow key={r.label} label={r.label} count={r.count} pct={r.pct} color={P[i % P.length]} icon={REF_ICONS[r.label] || '🌐'} />

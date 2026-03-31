@@ -403,7 +403,7 @@ const Customers: React.FC = () => {
             {selected && <CustomerDrawer customer={selected} onClose={() => setSelected(null)} />}
 
             {/* ── HEADER ── */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, gap: 12, flexWrap: 'wrap' }}>
+            <div className="admin-page-header">
                 <div>
                     <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, background: 'linear-gradient(135deg,#fff,#a1a1aa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         Customers
@@ -412,7 +412,7 @@ const Customers: React.FC = () => {
                         {customers.length.toLocaleString()} total · {recurringCount} recurring
                     </div>
                 </div>
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <div className="admin-controls">
                     {/* Date range pills */}
                     <div style={{ background: 'rgba(15,15,20,0.6)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: 4, display: 'flex', gap: 3 }}>
                         {DATE_RANGES.map(r => (
@@ -436,7 +436,7 @@ const Customers: React.FC = () => {
             </div>
 
             {/* ── STAT CARDS ── */}
-            <div style={{ display: 'flex', gap: 14, marginBottom: 22, flexWrap: 'wrap' }}>
+            <div className="admin-stat-row">
                 <StatCard label="Total Customers" value={customers.length} color="#6366f1"
                     icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>}
                 />
@@ -453,9 +453,9 @@ const Customers: React.FC = () => {
 
             {/* ── FILTER / SEARCH BAR ── */}
             <GlassCard style={{ padding: '14px 18px', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <div className="admin-filter-bar">
                     {/* Search */}
-                    <div style={{ flex: 1, minWidth: 220, display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '0 12px' }}>
+                    <div className="admin-search-bar" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '0 12px' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
                         <input
                             value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
@@ -511,7 +511,7 @@ const Customers: React.FC = () => {
 
             {/* ── TABLE ── */}
             <GlassCard style={{ overflow: 'hidden', marginBottom: 14 }}>
-                <div style={{ overflowX: 'auto' }}>
+                <div className="admin-table-wrap">
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
@@ -579,7 +579,7 @@ const Customers: React.FC = () => {
             </GlassCard>
 
             {/* ── PAGINATION ── */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div className="admin-pagination" style={{ border: 'none' }}>
                 <div style={{ fontSize: '0.78rem', color: '#52525b' }}>
                     Showing {Math.min((page - 1) * pageSize + 1, total)}–{Math.min(page * pageSize, total)} of {total.toLocaleString()} row{total !== 1 ? 's' : ''}
                 </div>

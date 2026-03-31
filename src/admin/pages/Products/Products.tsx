@@ -43,7 +43,7 @@ const Products: React.FC = () => {
             {/* Toolbar */}
             <div className="table-card" style={{ padding: '16px 24px', marginBottom: 24 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', width: 380 }}>
+                    <div className="admin-search-bar">
                         <Search
                             size={18}
                             style={{
@@ -66,6 +66,7 @@ const Products: React.FC = () => {
 
             {/* Data Table */}
             <div className="table-card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div className="admin-table-wrap">
                 <table className="data-table">
                     <thead>
                         <tr>
@@ -193,15 +194,11 @@ const Products: React.FC = () => {
                         )}
                     </tbody>
                 </table>
+              </div>
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '16px 24px',
-                        borderTop: '1px solid rgba(255,255,255,0.05)',
-                        background: 'rgba(255,255,255,0.01)',
-                    }}>
+                    <div className="admin-pagination">
                         <div style={{ fontSize: '0.875rem', color: '#71717a' }}>
                             Showing {((page - 1) * itemsPerPage) + 1} to {Math.min(page * itemsPerPage, filteredProducts.length)} of {filteredProducts.length} results
                         </div>

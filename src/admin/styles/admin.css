@@ -10,6 +10,7 @@
     --admin-accent-blue: var(--primary-color);
     --admin-accent-purple: var(--secondary-color);
     --admin-sidebar-w: 280px;
+    --admin-mobile-header-h: 60px;
     --glass-blur: 20px;
 }
 
@@ -21,7 +22,6 @@
     font-family: 'Satoshi', sans-serif;
     position: relative;
     overflow: hidden;
-    /* Prevent body scroll */
 }
 
 /* Background Effects (Matches Main Site) */
@@ -38,6 +38,23 @@
     z-index: 0;
 }
 
+/* ──────────────────────────────
+   MOBILE HEADER (hidden on desktop)
+   ────────────────────────────── */
+.admin-mobile-header {
+    display: none;
+}
+
+/* ──────────────────────────────
+   SIDEBAR OVERLAY (mobile only)
+   ────────────────────────────── */
+.admin-sidebar-overlay {
+    display: none;
+}
+
+/* ──────────────────────────────
+   SIDEBAR
+   ────────────────────────────── */
 .admin-sidebar {
     width: var(--admin-sidebar-w);
     background: rgba(10, 10, 12, 0.6);
@@ -49,8 +66,8 @@
     padding: 24px;
     height: 100vh;
     overflow-y: auto;
-    /* Enable vertical scrolling */
     flex-shrink: 0;
+    z-index: 100;
 }
 
 .sidebar-brand {
@@ -67,6 +84,7 @@
 .sidebar-brand span {
     background: linear-gradient(90deg, #fff, #a1a1aa);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -146,7 +164,9 @@
     box-shadow: 0 4px 10px rgba(79, 104, 248, 0.3);
 }
 
-/* Main Content */
+/* ──────────────────────────────
+   MAIN CONTENT
+   ────────────────────────────── */
 .admin-content {
     flex: 1;
     padding: 40px;
@@ -154,7 +174,8 @@
     z-index: 1;
     height: 100vh;
     overflow-y: auto;
-    /* Enable vertical scrolling independently */
+    overflow-x: hidden;
+    min-width: 0; /* Prevent flex overflow */
 }
 
 .admin-header {
@@ -162,6 +183,8 @@
     justify-content: space-between;
     align-items: flex-end;
     margin-bottom: 40px;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .welcome-text h1 {
@@ -170,6 +193,7 @@
     margin-bottom: 8px;
     background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -190,6 +214,7 @@
     color: #fff;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .date-range-picker:hover {
@@ -197,7 +222,9 @@
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Dashboard Grid */
+/* ──────────────────────────────
+   DASHBOARD GRID
+   ────────────────────────────── */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -254,13 +281,14 @@
 .stats-sub {
     font-size: 0.85rem;
     color: #4ade80;
-    /* Success Green */
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-/* Charts Section */
+/* ──────────────────────────────
+   CHARTS
+   ────────────────────────────── */
 .charts-row {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -275,6 +303,7 @@
     border-radius: 20px;
     padding: 30px;
     min-height: 420px;
+    overflow: hidden;
 }
 
 .chart-header {
@@ -282,6 +311,8 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .chart-title {
@@ -293,7 +324,9 @@
     gap: 10px;
 }
 
-/* Tables Section */
+/* ──────────────────────────────
+   TABLES
+   ────────────────────────────── */
 .tables-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -306,13 +339,13 @@
     border: 1px solid var(--admin-card-border);
     border-radius: 20px;
     padding: 30px;
+    overflow: hidden;
 }
 
 .data-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0 8px;
-    /* Spacing between rows */
     margin-top: 10px;
 }
 
@@ -324,6 +357,7 @@
     padding: 10px 15px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .data-table td {
@@ -353,7 +387,9 @@
     width: 80%;
 }
 
-/* Scrollbar */
+/* ──────────────────────────────
+   SCROLLBAR
+   ────────────────────────────── */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -371,7 +407,9 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* UI Elements */
+/* ──────────────────────────────
+   UI ELEMENTS
+   ────────────────────────────── */
 .btn-primary {
     background: var(--admin-accent-blue);
     color: white;
@@ -386,6 +424,7 @@
     gap: 8px;
     transition: all 0.2s;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .btn-primary:hover {
@@ -454,10 +493,598 @@
     font-size: 0.95rem;
     transition: all 0.2s;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
 .admin-input:focus {
     border-color: var(--admin-accent-blue);
     outline: none;
     box-shadow: 0 0 0 2px rgba(79, 104, 248, 0.1);
+}
+
+/* ──────────────────────────────
+   HAMBURGER BUTTON
+   ────────────────────────────── */
+.admin-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    z-index: 1001;
+    transition: background 0.2s;
+}
+
+.admin-hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger-line {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #e4e4e7;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger-line.open:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-line.open:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-line.open:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ──────────────────────────────
+   MOBILE BRAND
+   ────────────────────────────── */
+.admin-mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    letter-spacing: -0.3px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE UTILITY CLASSES
+   These classes provide mobile-responsive layouts for the admin
+   pages that use inline styles. Inline styles can't be overridden
+   by media queries, so we use CSS classes with responsive rules.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Stat card row — flex row with wrapping */
+.admin-stat-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.admin-stat-row > * {
+    flex: 1;
+    min-width: 180px;
+}
+
+/* Search toolbar with fixed-width search input */
+.admin-search-bar {
+    position: relative;
+    width: 380px;
+    max-width: 100%;
+}
+
+/* Filter/controls bar */
+.admin-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Two-column grid layout */
+.admin-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Three-column grid layout */
+.admin-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* Four-column grid layout */
+.admin-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+/* Page header (used across many admin pages) */
+.admin-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Controls group in header */
+.admin-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Table wrapper for horizontal scroll on mobile */
+.admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Table pagination */
+.admin-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.01);
+}
+
+/* Grid for StatusManager service rows */
+.admin-service-grid {
+    display: grid;
+    grid-template-columns: 1fr 160px 150px 80px;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Form two-column layout */
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Modal overlay */
+.admin-modal-content {
+    width: 460px;
+    max-width: 90vw;
+}
+
+/* Custom date bar */
+.admin-date-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+/* Status Manager header row */
+.admin-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Game header row in status manager */
+.admin-game-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Status pills row */
+.admin-status-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE – TABLET (max 1024px)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+
+    /* Show mobile header */
+    .admin-mobile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        height: var(--admin-mobile-header-h);
+        padding: 0 16px;
+        background: rgba(10, 10, 12, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Show sidebar overlay */
+    .admin-sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 998;
+    }
+
+    /* Sidebar becomes off-canvas drawer */
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--admin-sidebar-w);
+        max-width: 85vw;
+        transform: translateX(-100%);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        background: rgba(10, 10, 12, 0.98);
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 24px;
+    }
+
+    .admin-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+
+    /* Main content gets top padding for fixed header */
+    .admin-content {
+        padding: 24px 16px;
+        padding-top: calc(var(--admin-mobile-header-h) + 20px);
+        width: 100%;
+    }
+
+    /* Dashboard grid: 2 columns */
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    /* Charts stack vertically */
+    .charts-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Tables stack */
+    .tables-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .admin-header {
+        margin-bottom: 24px;
+    }
+
+    .welcome-text h1 {
+        font-size: 1.6rem;
+    }
+
+    .chart-card {
+        padding: 20px;
+        min-height: 320px;
+    }
+
+    .table-card {
+        padding: 20px;
+    }
+
+    .stats-card {
+        padding: 18px;
+        min-height: 130px;
+    }
+
+    .stats-value {
+        font-size: 1.8rem;
+    }
+
+    /* Utility classes tablet */
+    .admin-grid-2 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-grid-3 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-stat-row > * {
+        min-width: 140px;
+    }
+
+    .admin-search-bar {
+        width: 100%;
+    }
+
+    .admin-service-grid {
+        grid-template-columns: 1fr 130px 120px 60px;
+        gap: 8px;
+    }
+
+    .admin-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-status-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-controls {
+        width: 100%;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE – PHONE (max 640px)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+    .admin-content {
+        padding: 12px;
+        padding-top: calc(var(--admin-mobile-header-h) + 12px);
+    }
+
+    /* Dashboard grid: single column */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .charts-row {
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .tables-row {
+        gap: 12px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .welcome-text h1 {
+        font-size: 1.3rem;
+    }
+
+    .welcome-text p {
+        font-size: 0.85rem;
+    }
+
+    .date-range-picker {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        align-self: flex-start;
+    }
+
+    .stats-card {
+        padding: 16px;
+        min-height: auto;
+    }
+
+    .stats-value {
+        font-size: 1.5rem;
+        margin: 8px 0;
+    }
+
+    .stats-label {
+        font-size: 0.85rem;
+    }
+
+    .stats-sub {
+        font-size: 0.78rem;
+    }
+
+    .chart-card {
+        padding: 16px;
+        min-height: 280px;
+        border-radius: 14px;
+    }
+
+    .chart-header {
+        margin-bottom: 16px;
+    }
+
+    .chart-title {
+        font-size: 0.95rem;
+    }
+
+    .table-card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .data-table th {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+
+    .data-table td {
+        padding: 12px 10px;
+        font-size: 0.85rem;
+    }
+
+    .btn-primary {
+        padding: 8px 14px;
+        font-size: 0.82rem;
+    }
+
+    .btn-secondary {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
+
+    .form-group label {
+        font-size: 0.85rem;
+    }
+
+    .admin-input {
+        padding: 10px 12px;
+        font-size: 0.88rem;
+    }
+
+    /* Utility classes phone */
+    .admin-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .admin-grid-3 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .admin-stat-row {
+        gap: 10px;
+    }
+
+    .admin-stat-row > * {
+        min-width: 100%;
+        flex: unset;
+    }
+
+    .admin-search-bar {
+        width: 100%;
+    }
+
+    .admin-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-filter-bar > * {
+        width: 100%;
+    }
+
+    .admin-service-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .admin-game-header {
+        padding: 12px 14px;
+        gap: 8px;
+    }
+
+    .admin-status-pills {
+        width: 100%;
+        order: 10;
+    }
+
+    .admin-page-header {
+        gap: 10px;
+    }
+
+    .admin-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-controls > * {
+        width: 100%;
+    }
+
+    .admin-pagination {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .admin-date-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-date-bar input {
+        width: 100% !important;
+    }
+
+    .admin-form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE – VERY SMALL PHONES (max 400px)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+
+    .admin-mobile-header {
+        padding: 0 12px;
+    }
+
+    .admin-mobile-brand {
+        font-size: 0.95rem;
+    }
+
+    .admin-content {
+        padding: 8px;
+        padding-top: calc(var(--admin-mobile-header-h) + 8px);
+    }
+
+    .welcome-text h1 {
+        font-size: 1.15rem;
+    }
+
+    .stats-value {
+        font-size: 1.3rem;
+    }
+
+    .chart-card {
+        padding: 12px;
+        min-height: 240px;
+    }
+
+    .table-card {
+        padding: 12px;
+    }
 }

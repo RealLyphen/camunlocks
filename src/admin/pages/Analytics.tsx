@@ -111,7 +111,7 @@ const Analytics: React.FC = () => {
         <div style={{ padding: '0 0 48px', fontFamily: 'Inter,sans-serif', color: '#fff' }}>
 
             {/* ── HEADER ── */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
+            <div className="admin-page-header">
                 <div>
                     <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, background: 'linear-gradient(135deg,#fff,#a1a1aa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         Store Analytics
@@ -122,7 +122,7 @@ const Analytics: React.FC = () => {
                 </div>
 
                 {/* Controls */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div className="admin-controls">
                     {/* Date range display */}
                     <div style={{ background: 'rgba(15,15,20,0.7)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '8px 14px', fontSize: '0.78rem', color: '#71717a' }}>
                         📅 {format(from, 'dd MMM yyyy HH:mm')} → {format(to, 'dd MMM yyyy HH:mm')}
@@ -154,7 +154,7 @@ const Analytics: React.FC = () => {
             </div>
 
             {/* Custom date range */}
-            <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div className="admin-date-bar">
                 <span style={{ fontSize: '0.78rem', color: '#52525b' }}>Custom range:</span>
                 <input type="datetime-local" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
                     style={{ background: 'rgba(15,15,20,0.7)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '6px 10px', color: '#d4d4d8', fontSize: '0.78rem', colorScheme: 'dark' }} />
@@ -174,7 +174,7 @@ const Analytics: React.FC = () => {
             </div>
 
             {/* ── STAT CARDS ── */}
-            <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
+            <div className="admin-stat-row">
                 <StatCard label="Revenue" value={`$${stats.revenue.toFixed(2)}`} sub="Total earnings" color="#6366f1" delta="+0%"
                     icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>} />
                 <StatCard label="Orders" value={stats.orders.toLocaleString()} sub="Total completed" color="#8b5cf6" delta="+0%"
@@ -240,7 +240,7 @@ const Analytics: React.FC = () => {
             </GlassCard>
 
             {/* ── BOTTOM ROW ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="admin-grid-2">
                 {/* Top Products */}
                 <GlassCard title="🏆 Top Products">
                     {products.length === 0 ? <Empty text="No products yet — add products to see performance" /> : (

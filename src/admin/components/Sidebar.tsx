@@ -25,7 +25,12 @@ import {
 } from 'lucide-react';
 import { Activity } from 'lucide-react';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
 
     const toggleMenu = (label: string) => {
@@ -106,7 +111,7 @@ const Sidebar: React.FC = () => {
     ];
 
     return (
-        <aside className="admin-sidebar">
+        <aside className={`admin-sidebar ${isOpen ? 'sidebar-open' : ''}`}>
             <div className="sidebar-brand">
                 <img src="/logo.png" alt="Logo" style={{ width: 30, height: 30 }} />
                 <span>Camunlocks</span>
@@ -144,6 +149,7 @@ const Sidebar: React.FC = () => {
                                                 end={sub.path === item.path}
                                                 className={({ isActive }) => `menu-item ${isActive ? 'active' : ''}`}
                                                 style={{ fontSize: '0.9rem', padding: '10px 12px' }}
+                                                onClick={onClose}
                                             >
                                                 {sub.icon}
                                                 <span>{sub.label}</span>
@@ -157,6 +163,7 @@ const Sidebar: React.FC = () => {
                                 to={item.path}
                                 className={({ isActive }) => `menu-item ${isActive && item.path !== '/admin/settings' ? 'active' : ''}`}
                                 end={item.path === '/admin'}
+                                onClick={onClose}
                             >
                                 {item.icon}
                                 <span>{item.label}</span>
